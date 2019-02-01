@@ -1,7 +1,7 @@
 package se.kth.dd2480.grp25.ci;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * An blocking thread safe event queue.
@@ -9,7 +9,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  * <p>This queue can at most hold {@code Integer.MAX_VALUE} events at once.
  */
 public class EventQueue {
-  private BlockingQueue<Event> queue = new LinkedBlockingDeque<>();
+  private BlockingQueue<Event> queue = new LinkedBlockingQueue<>();
 
   /** Create an {@code EventQueue}. */
   public EventQueue() {}
