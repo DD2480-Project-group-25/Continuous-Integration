@@ -109,7 +109,7 @@ public class CloneJob implements Runnable {
   public void run() {
     try {
       Runtime rt = Runtime.getRuntime();
-      Process p = rt.exec("git clone --branch " + branch + url + directory);
+      Process p = rt.exec("git clone --branch " + " " + branch + " " + url + " " + directory);
     } catch (IOException e) {
       System.out.println("IO Exception");
     }
