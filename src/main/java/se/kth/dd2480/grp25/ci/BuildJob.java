@@ -31,18 +31,14 @@ public class BuildJob implements Runnable {
         this.event = event;
     }
 
-    /** Prints the given event when run. */
     @Override
     public void run() {
         ProjectConnection connection = GradleConnector.newConnector()
-                .forProjectDirectory(new File("."))
+                .forProjectDirectory(new File("/Users/Veronica/IdeaProjects/Continuous-Integration/src/BuildTest"))
                 .connect();
 
         try {
             BuildLauncher build = connection.newBuild();
-
-            //select tasks to run:
-            build.forTasks("clean", "test");
 
             //kick the build off:
             build.run();
