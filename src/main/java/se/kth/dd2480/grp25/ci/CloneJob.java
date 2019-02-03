@@ -1,5 +1,6 @@
 package se.kth.dd2480.grp25.ci;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Scanner;
@@ -109,8 +110,9 @@ public class CloneJob implements Runnable {
   @Override
   public void run() {
     try {
-      Runtime rt = Runtime.getRuntime();
-      Process p = rt.exec("git clone --branch " + " " + branch + " " + url + " " + directory);
+      String command = "git clone --branch" + " " + branch + " " + url;
+      // run the command in the given directory
+      Process p = Runtime.getRuntime().exec(command, null, new File(directory));
       Scanner s = new Scanner(p.getErrorStream()).useDelimiter("\\A");
       String result = s.hasNext() ? s.next() : "";
       if (result.contains("fatal")) {
