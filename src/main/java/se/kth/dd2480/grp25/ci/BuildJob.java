@@ -6,44 +6,46 @@ import org.gradle.tooling.*;
 
 /** A job that prints every event to stdout. */
 public class BuildJob implements Runnable {
-    /**
-     * This functions decides if it wants to accept an event and offer a {@link PrintJob}.
-     *
-     * <p>This function confirms to the {@link JobAcceptor} interface.
-     *
-     * @param event the event offered to this function to accept or decline
-     * @return an print job represented by a {@link Runnable} if accepted
-     */
-    public static Optional<Runnable> offer(Event event) {
-        // 1. Decide if we want to handle this event
-        if (true) {
-            // 2. If we do, return a job handler
-            return Optional.of(new BuildJob(event));
-        } else {
-            // 3. If we don't, return nothing
-            return Optional.empty();
-        }
+  /**
+   * This functions decides if it wants to accept an event and offer a {@link PrintJob}.
+   *
+   * <p>This function confirms to the {@link JobAcceptor} interface.
+   *
+   * @param event the event offered to this function to accept or decline
+   * @return an print job represented by a {@link Runnable} if accepted
+   */
+  public static Optional<Runnable> offer(Event event) {
+    // 1. Decide if we want to handle this event
+    if (true) {
+      // 2. If we do, return a job handler
+      return Optional.of(new BuildJob(event));
+    } else {
+      // 3. If we don't, return nothing
+      return Optional.empty();
     }
+  }
 
-    private Event event;
+  private Event event;
 
-    private BuildJob(Event event) {
-        this.event = event;
+  private BuildJob(Event event) {
+    this.event = event;
+  }
+
+  @Override
+  public void run() {
+    ProjectConnection connection =
+        GradleConnector.newConnector()
+            .forProjectDirectory(new File("")) // Give pathname of project directory to build
+            .connect();
+
+    try {
+      BuildLauncher build = connection.newBuild();
+
+      // kick the build off:
+      build.run();
+    } finally {
+      System.out.println("build successful");
+      connection.close();
     }
-
-    @Override
-    public void run() {
-        ProjectConnection connection = GradleConnector.newConnector()
-                .forProjectDirectory(new File(""))
-                .connect();
-
-        try {
-            BuildLauncher build = connection.newBuild();
-
-            //kick the build off:
-            build.run();
-        } finally {
-            connection.close();
-        }
-    }
+  }
 }
