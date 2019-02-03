@@ -34,7 +34,7 @@ public class BuildJob implements Runnable {
     @Override
     public void run() {
         ProjectConnection connection = GradleConnector.newConnector()
-                .forProjectDirectory(new File("/Users/Veronica/IdeaProjects/Continuous-Integration/src/BuildTest"))
+                .forProjectDirectory(new File(""))
                 .connect();
 
         try {
