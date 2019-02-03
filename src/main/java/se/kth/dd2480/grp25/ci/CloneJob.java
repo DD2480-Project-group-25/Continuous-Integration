@@ -2,6 +2,7 @@ package se.kth.dd2480.grp25.ci;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -110,8 +111,15 @@ public class CloneJob implements Runnable {
     try {
       Runtime rt = Runtime.getRuntime();
       Process p = rt.exec("git clone --branch " + " " + branch + " " + url + " " + directory);
+      Scanner s = new Scanner(p.getErrorStream()).useDelimiter("\\A");
+      String result = s.hasNext() ? s.next() : "";
+      if (result.contains("fatal")) {
+        throw new IOException();
+      }
+      event.code = Event.StatusCode.SUCCESSFUL;
     } catch (IOException e) {
       System.out.println("IO Exception");
+      event.code = Event.StatusCode.FAIL;
     }
   }
 }
