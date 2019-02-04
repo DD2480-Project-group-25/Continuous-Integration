@@ -36,12 +36,9 @@ public class CloneJob implements Runnable {
    * @return an print job represented by a {@link Runnable} if accepted
    */
   public static Optional<Runnable> offer(Event event) {
-    // 1. Decide if we want to handle this event
-    if (event instanceof WebHookEvent) {
-      // 2. If we do, return a job handler
+    if (event.getType() == Event.EventType.CLONE) {
       return Optional.of(new CloneJob(event));
     } else {
-      // 3. If we don't, return nothing
       return Optional.empty();
     }
   }
