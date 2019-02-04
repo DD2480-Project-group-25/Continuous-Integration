@@ -2,6 +2,7 @@ package se.kth.dd2480.grp25.ci;
 
 /** An {@code Event} instance represents some important CI event. */
 public class Event {
+
   public enum EventType {
     CLONE,
     BUILD,
@@ -24,6 +25,7 @@ public class Event {
   public Event(String id, EventType type) {
     this.id = id;
     this.type = type;
+    this.code = StatusCode.NOTISSUED;
   }
 
   public String getId() {
