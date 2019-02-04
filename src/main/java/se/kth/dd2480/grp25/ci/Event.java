@@ -51,8 +51,4 @@ public class Event {
   public void setStatusCode(StatusCode code) {
     this.code = code;
   }
-<<<<<<< HEAD
-=======
-  
->>>>>>> 162c5780536ae2b3eb7b890f1436b6c5f22c640a
 }
