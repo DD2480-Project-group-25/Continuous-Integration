@@ -14,7 +14,7 @@ public class CI {
     d.start();
     for (int i = 0; i < 100; i++) {
       try {
-        q.insert(new Event());
+        q.insert(new Event("123", Event.EventType.CLONE));
       } catch (InterruptedException ignored) {
         System.err.println(
             "Interrupted while trying to insert event into queue, event not inserted.");
