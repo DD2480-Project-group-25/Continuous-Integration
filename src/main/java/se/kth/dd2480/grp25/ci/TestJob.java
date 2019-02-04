@@ -24,7 +24,11 @@ public class TestJob implements Runnable {
     }
   }
 
-  /** */
+  /**
+   * Scans the project directory for the name of the test files. Creates a connection to the gradle
+   * project, starts a TestLauncher that runs all test files of the gradle project. If any tests
+   * fail an error string is set in the Event.
+   */
   @Override
   public void run() {
     DirectoryScanner scanner = new DirectoryScanner();
