@@ -118,10 +118,10 @@ public class CloneJob implements Runnable {
       if (result.contains("fatal")) {
         throw new IOException();
       }
-      event.code = Event.StatusCode.SUCCESSFUL;
+      event.setStatusCode(Event.StatusCode.SUCCESSFUL);
     } catch (IOException e) {
       System.out.println("IO Exception");
-      event.code = Event.StatusCode.FAIL;
+      event.setStatusCode(Event.StatusCode.FAIL);
     }
   }
 }
