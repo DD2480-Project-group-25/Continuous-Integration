@@ -11,16 +11,13 @@ import org.gradle.tooling.*;
  */
 public class TestJob implements Runnable {
   private Event event;
-  private String directory;
 
   public TestJob(Event event) {
     this.event = event;
-    // Currently running assignment 1 for testing, won't pass corresponding test on circle ci.
-    this.directory = "../DECIDE/";
   }
 
   public static Optional<Runnable> offer(Event event) {
-    if (true) {
+    if (event.getType() == Event.EventType.TEST) {
       return Optional.of(new TestJob(event));
     } else {
       return Optional.empty();
@@ -30,9 +27,8 @@ public class TestJob implements Runnable {
   /** */
   @Override
   public void run() {
-    // Scan for test files that have been built
     DirectoryScanner scanner = new DirectoryScanner();
-    scanner.setBasedir(directory);
+    scanner.setBasedir("./" + event.getId());
     scanner.setIncludes(new String[] {"src/test/java**\\*.java"});
     scanner.scan();
     StringBuilder sb = new StringBuilder();
@@ -41,9 +37,10 @@ public class TestJob implements Runnable {
     }
     String[] tests = sb.toString().split("\\s");
 
-    // Open connection to cloned and build repository
     ProjectConnection conn =
-        GradleConnector.newConnector().forProjectDirectory(new File(directory)).connect();
+        GradleConnector.newConnector()
+            .forProjectDirectory(new File("./" + event.getId()))
+            .connect();
     try {
       TestLauncher launcher = conn.newTestLauncher();
       launcher.withJvmTestClasses(tests);
@@ -52,17 +49,18 @@ public class TestJob implements Runnable {
             @Override
             public void onComplete(Void result) {
               event.setMessage("All tests passed.");
-              System.out.println(event.getMessage());
+              event.setStatusCode(Event.StatusCode.SUCCESSFUL);
             }
 
             @Override
             public void onFailure(GradleConnectionException failure) {
               event.setMessage(failure.getCause().toString());
-              System.out.println(event.getMessage());
+              event.setStatusCode(Event.StatusCode.FAIL);
             }
           });
     } catch (Exception e) {
-      System.out.println(e);
+      event.setMessage("CI Server error: " + e);
+      event.setStatusCode(Event.StatusCode.FAIL);
     } finally {
       conn.close();
     }
