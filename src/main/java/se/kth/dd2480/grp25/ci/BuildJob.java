@@ -1,14 +1,13 @@
 package se.kth.dd2480.grp25.ci;
 
 import java.io.File;
-import java.nio.file.NotDirectoryException;
 import java.util.Optional;
 import org.gradle.tooling.*;
 
-/** A job that prints every event to stdout. */
+/** A job that builds a project given by an Event object. */
 public class BuildJob implements Runnable {
   /**
-   * This functions decides if it wants to accept an event and offer a {@link PrintJob}.
+   * This functions decides if it wants to accept an event and offer a {@link BuildJob}.
    *
    * <p>This function confirms to the {@link JobAcceptor} interface.
    *
@@ -41,21 +40,16 @@ public class BuildJob implements Runnable {
   @Override
   public void run() {
 
-    try {
-      File project = (new File(path));
+    File project = (new File(path));
 
-      if (!project.exists()) {
-        event.setStatusCode(Event.StatusCode.FAIL);
-        throw new NotDirectoryException("project directory not found at: " + path);
-      } else {
-        ProjectConnection connection =
-            GradleConnector.newConnector().forProjectDirectory(project).connect();
+    if (!project.exists()) {
+      event.setStatusCode(Event.StatusCode.FAIL);
+      event.setMessage("project directory not found at: " + path);
+    } else {
+      ProjectConnection connection =
+          GradleConnector.newConnector().forProjectDirectory(project).connect();
 
-        launch(connection);
-      }
-
-    } catch (NotDirectoryException e) {
-      event.setMessage(e.getMessage());
+      launch(connection);
     }
   }
 
