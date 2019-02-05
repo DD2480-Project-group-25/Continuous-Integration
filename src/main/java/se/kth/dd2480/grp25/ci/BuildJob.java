@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Optional;
 import org.gradle.tooling.*;
 
-/** A job that builds a project given by an Event object. */
+/** A job that builds a project given by an Event object of EventType 'BUILD'. */
 public class BuildJob implements Runnable {
   /**
    * This functions decides if it wants to accept an event and offer a {@link BuildJob}.
