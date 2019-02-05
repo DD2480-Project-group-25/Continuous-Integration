@@ -116,8 +116,10 @@ public class CloneJob implements Runnable {
         throw new IOException();
       }
       event.setStatusCode(Event.StatusCode.SUCCESSFUL);
+      event.setMessage("The repository is cloned successfully");
     } catch (IOException e) {
       System.out.println("IO Exception");
+      event.setMessage("Could not clone repository");
       event.setStatusCode(Event.StatusCode.FAIL);
     }
   }
