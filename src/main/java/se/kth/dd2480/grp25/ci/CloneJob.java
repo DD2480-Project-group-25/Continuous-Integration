@@ -107,7 +107,7 @@ public class CloneJob implements Runnable {
   @Override
   public void run() {
     try {
-      String command = "git clone --branch" + " " + branch + " " + url;
+      String command = "git clone --branch" + " " + branch + " " + url + " " + event.getId();
       // run the command in the given directory
       Process p = Runtime.getRuntime().exec(command, null, new File(directory));
       Scanner s = new Scanner(p.getErrorStream()).useDelimiter("\\A");
