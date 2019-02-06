@@ -59,7 +59,7 @@ public class CiServer {
     is.close();
     exchange.close();
 
-    // Parse payload form POST request
+    // Parse payload from POST request, "after" is the commit hash
     String commitID = parseJsonString(req_body, "after");
 
     if (commitID == "INVALID") {
