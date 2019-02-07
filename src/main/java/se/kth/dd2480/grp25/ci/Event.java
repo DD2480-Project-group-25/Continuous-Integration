@@ -31,6 +31,19 @@ public class Event {
   private final Type type;
   private final Status code;
   private final String message;
+  private final String repository;
+
+  /**
+   * Constructor overloading for create event
+   *
+   * @param id the commit id the event pertains to.
+   * @param type the type of job that completed and generated this event.
+   * @param status indicates if the job that generated this event was successful or not.
+   * @param message an message from the job that generated this event.
+   */
+  public Event(String id, Type type, Status status, String message) {
+    this(id, type, status, message, "");
+  }
 
   /**
    * Create an event.
@@ -40,11 +53,12 @@ public class Event {
    * @param status indicates if the job that generated this event was successful or not.
    * @param message an message from the job that generated this event.
    */
-  public Event(String id, Type type, Status status, String message) {
+  public Event(String id, Type type, Status status, String message, String repository) {
     this.id = id;
     this.type = type;
     this.code = status;
     this.message = message;
+    this.repository = repository;
   }
 
   /**
@@ -81,5 +95,14 @@ public class Event {
    */
   public Status getStatus() {
     return code;
+  }
+
+  /**
+   * Get the repository name of the job that generated this event.
+   *
+   * @return the repository name of the job that generated this event.
+   */
+  public String getRepository() {
+    return repository;
   }
 }
