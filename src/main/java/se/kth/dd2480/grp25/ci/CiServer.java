@@ -19,15 +19,17 @@ import java.net.InetSocketAddress;
 public class CiServer {
   private HttpServer server;
   private final int port = 8000;
+  private final EventQueue eventQueue;
 
   public static void main(String[] args) throws IOException {
     new CiServer();
   }
 
   public CiServer() throws IOException {
+    eventQueue = new EventQueue();
     server = HttpServer.create(new InetSocketAddress(port), 0);
     server.createContext("/").setHandler(CiServer::handleHttpRequest);
-    server.createContext("/hooks/github").setHandler(CiServer::handleWebhook);
+    server.createContext("/hooks/github").setHandler(this::handleWebhook);
     server.start();
     System.out.println("Server running...");
   }
@@ -40,7 +42,7 @@ public class CiServer {
     os.close();
   }
 
-  private static void handleWebhook(HttpExchange exchange) {
+  private void handleWebhook(HttpExchange exchange) {
     String req_body = "";
     try {
       if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
@@ -67,15 +69,23 @@ public class CiServer {
     // Parse payload from POST request, "after" is the commit hash
     String[] arg = new String[] {"after"};
     String commitID = parseJsonString(req_body, arg);
-    String[] url = new String[] {"repository", "html_url"};
-    String repoURL = parseJsonString(req_body,url);
+    String[] repo = new String[] {"repository", "full_name"};
+    String repoName = parseJsonString(req_body, repo);
 
-    if (commitID == "" || repoURL == "") {
+    if (commitID == "" || repoName == "") {
       // Should perhaps be logged
       System.err.println("Invalid JSON file provided");
       return;
     }
-    System.out.println(commitID);
+    Event webhookEvent = new Event(commitID, Event.EventType.WEB_HOOK);
+    webhookEvent.setStatusCode(Event.StatusCode.SUCCESSFUL);
+    webhookEvent.setRepository(repoName);
+
+    try {
+      eventQueue.insert(webhookEvent);
+    } catch (InterruptedException e) {
+      System.err.println(e);
+    }
   }
 
   public static String parseJsonString(String json, String[] arg) {
