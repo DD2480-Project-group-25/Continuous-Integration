@@ -21,7 +21,7 @@ public class CleanupJob implements Runnable {
     public Optional<Runnable> offer(Event event) {
       boolean interesting =
           (event.getType() == Event.Type.TEST && event.getStatus() == Event.Status.SUCCESSFUL)
-              || (event.getStatus() == Event.Status.FAIL);
+              || (event.getType() != Event.Type.CLEANUP && event.getStatus() == Event.Status.FAIL);
 
       return interesting ? Optional.of(new CleanupJob(event, super.queue)) : Optional.empty();
     }
