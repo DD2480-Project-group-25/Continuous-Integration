@@ -76,10 +76,9 @@ public class CiServer {
       System.err.println("Invalid JSON file provided");
       return;
     }
-    Event webhookEvent = new Event(commitID, Event.EventType.WEB_HOOK);
-    webhookEvent.setStatusCode(Event.StatusCode.SUCCESSFUL);
-    webhookEvent.setRepository(repoName);
 
+    Event webhookEvent =
+        new Event(commitID, Event.Type.WEB_HOOK, Event.Status.SUCCESSFUL, "", repoName);
     try {
       eventQueue.insert(webhookEvent);
     } catch (InterruptedException e) {
