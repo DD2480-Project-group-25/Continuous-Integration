@@ -75,7 +75,7 @@ public class BuildJob implements Runnable {
 
   private void launch(ProjectConnection con) {
     try {
-      File dir = new File(path);
+      Fle dir = new File(path);
       if (!dir.exists()) {
         queue.insert(
             new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, "Dir doesn't exist"));
