@@ -2,7 +2,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
-
 import org.junit.Assert;
 import org.junit.Test;
 import se.kth.dd2480.grp25.ci.CiServer;
