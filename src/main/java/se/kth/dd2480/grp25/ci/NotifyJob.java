@@ -30,7 +30,7 @@ public class NotifyJob implements Runnable {
     @Override
     public void run() {
         try{
-            String command = "curl -X POST -H \'Content-Type:application/json\' --data \'{\"state\":\"success\",\"target_url\":\"https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/build/321c3452974ccfa0d4fb11d7b584f68472fcbabc\",\"description\":\"BuildSuccessful\",\"context\":\"own_ci\"}\' https://9ed1fe6ed2dbbe03fcf1dd10b7f525fa828e468b:x-oauth-basic@api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/statuses/321c3452974ccfa0d4fb11d7b584f68472fcbabc\n";
+            String command = "curl -X POST -H \'Content-Type:application/json\' --data \'{\"state\":\"success\",\"target_url\":\"https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/build/321c3452974ccfa0d4fb11d7b584f68472fcbabc\",\"description\":\"BuildSuccessful\",\"context\":\"own_ci\"}\' https://:x-oauth-basic@api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/statuses/321c3452974ccfa0d4fb11d7b584f68472fcbabc\n";
             String params = "{\"state\":\"success\",\"target_url\":\"https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/build/321c3452974ccfa0d4fb11d7b584f68472fcbabc\",\"description\":\"BuildSuccessful\",\"context\":\"own_ci\"}";
             System.out.println(command);
             URL url = new URL("https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/statuses/321c3452974ccfa0d4fb11d7b584f68472fcbabc");
