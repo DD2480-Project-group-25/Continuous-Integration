@@ -20,9 +20,7 @@ public class NotifyJob implements Runnable {
 
     @Override
     public Optional<Runnable> offer(Event event) {
-      if (event.getType() == Event.Type.TEST
-          || event.getType() == Event.Type.BUILD
-          || event.getType() == Event.Type.WEB_HOOK) {
+      if (event.getType() == Event.Type.TEST || event.getType() == Event.Type.BUILD) {
         return Optional.of(new NotifyJob(event, super.queue));
       } else {
         return Optional.empty();
@@ -95,11 +93,13 @@ public class NotifyJob implements Runnable {
           }
         }
         os.write(params.getBytes(StandardCharsets.UTF_8));
-        if (conn.getResponseCode() != HttpURLConnection.HTTP_CREATED) {
-          notifyEvent =
-              new Event(event.getId(), Event.Type.NOTIFY, Event.Status.FAIL, "Failed to notify");
+        if (conn.getResponseCode() == 422) {
+          queue.insert(
+              new Event(
+                  event.getId(), Event.Type.NOTIFY, Event.Status.FAIL, "Unprocessable entity"));
+        } else {
+          queue.insert(notifyEvent);
         }
-        queue.insert(notifyEvent);
         os.flush();
       }
     } catch (Exception e) {
