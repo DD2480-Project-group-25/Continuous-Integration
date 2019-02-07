@@ -1,22 +1,38 @@
 package se.kth.dd2480.grp25.ci;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 /** A job that removes a cloned repository located in the project's root */
 public class CleanupJob implements Runnable {
-  private Event event;
+  /**
+   * A {@link JobExaminer} that creates instances of {@link CloneJob}.
+   *
+   * <p>Inspect the docs for {@link JobExaminer}.
+   */
+  public static class Examiner extends JobExaminer {
 
-  public CleanupJob(Event event) {
-    this.event = event;
+    public Examiner(EventQueue queue) {
+      super(queue);
+    }
+
+    @Override
+    public Optional<Runnable> offer(Event event) {
+      boolean interesting =
+          (event.getType() == Event.Type.TEST && event.getStatus() == Event.Status.SUCCESSFUL)
+              || (event.getStatus() == Event.Status.FAIL);
+
+      return interesting ? Optional.of(new CleanupJob(event, super.queue)) : Optional.empty();
+    }
   }
 
-  public static Optional<Runnable> offer(Event event) {
-    if (event.getType() == Event.EventType.CLEANUP) {
-      return Optional.of(new CleanupJob(event));
-    } else {
-      return Optional.empty();
-    }
+  private Event event;
+  private EventQueue queue;
+
+  public CleanupJob(Event event, EventQueue queue) {
+    this.event = event;
+    this.queue = queue;
   }
 
   /**
@@ -26,24 +42,40 @@ public class CleanupJob implements Runnable {
   @Override
   public void run() {
     try {
-      File dir = new File("./" + event.getId());
-      if (!dir.exists()) {
-        event.setMessage("CI Server error: directory doesn't exist");
-        event.setStatusCode(Event.StatusCode.FAIL);
-        return;
+      try {
+        File dir = new File("./" + event.getId());
+        if (!dir.exists()) {
+          queue.insert(
+              new Event(
+                  event.getId(),
+                  Event.Type.CLEANUP,
+                  Event.Status.SUCCESSFUL,
+                  "Directory doesn't exist, nothing to cleanup"));
+          return;
+        }
+        String command = "rm -rf " + event.getId();
+        Runtime.getRuntime().exec(command, null, new File(".")).waitFor();
+        if (!dir.exists()) {
+          queue.insert(
+              new Event(
+                  event.getId(),
+                  Event.Type.CLEANUP,
+                  Event.Status.SUCCESSFUL,
+                  "Cloned repository was successfully deleted"));
+        } else {
+          queue.insert(
+              new Event(
+                  event.getId(),
+                  Event.Type.CLEANUP,
+                  Event.Status.FAIL,
+                  "Could not delete repository."));
+        }
+      } catch (IOException e) {
+        queue.insert(
+            new Event(event.getId(), Event.Type.CLEANUP, Event.Status.FAIL, e.getMessage()));
       }
-      String command = "rm -rf " + event.getId();
-      Runtime.getRuntime().exec(command, null, new File(".")).waitFor();
-      if (!dir.exists()) {
-        event.setMessage("Cloned repository was successfully deleted");
-        event.setStatusCode(Event.StatusCode.SUCCESSFUL);
-      } else {
-        event.setMessage("Could not delete repository");
-        event.setStatusCode(Event.StatusCode.FAIL);
-      }
-    } catch (Exception e) {
-      event.setMessage("CI Server error: " + e);
-      event.setStatusCode(Event.StatusCode.FAIL);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
   }
 }
