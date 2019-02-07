@@ -41,14 +41,13 @@ public class PrintJob implements Runnable {
   /** Prints the given event when run. */
   @Override
   public void run() {
-    System.out.println(String.format("%5s", event.getMessage()));
     try {
       queue.insert(
           new Event(
               Long.toHexString(System.nanoTime()),
               Event.Type.PRINT,
               Event.Status.SUCCESSFUL,
-              "" + (Integer.parseInt(event.getMessage()) + 1)));
+              "" + (Integer.parseInt(event.getMessage()))));
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
