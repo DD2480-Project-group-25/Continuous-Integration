@@ -28,12 +28,12 @@ public class CloneJob implements Runnable {
     this.directory = ".";
   }
   /**
-   * This function decides if it wants to accept an event and offer a {@link PrintJob}.
+   * This function decides if it wants to accept an event and offer a {@link CloneJob}.
    *
    * <p>This function confirms to the {@link JobAcceptor} interface.
    *
    * @param event the event offered to this function to accept or decline
-   * @return an print job represented by a {@link Runnable} if accepted
+   * @return a clone job represented by a {@link Runnable} if accepted
    */
   public static Optional<Runnable> offer(Event event) {
     if (event.getType() == Event.EventType.CLONE) {
