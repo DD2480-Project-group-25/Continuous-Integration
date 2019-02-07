@@ -10,7 +10,7 @@ public class TestCleanupJob {
   @Test
   public void testDeleteSuccessful() throws IOException, InterruptedException {
     String command = "mkdir testDirectory";
-    Runtime.getRuntime().exec(command, null, new File("."));
+    Runtime.getRuntime().exec(command, null, new File(".")).waitFor();
 
     EventQueue queue = new EventQueue();
     Event event = new Event("testDirectory", Event.Type.TEST, Event.Status.SUCCESSFUL, null);

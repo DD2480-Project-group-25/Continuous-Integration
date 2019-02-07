@@ -2,6 +2,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import se.kth.dd2480.grp25.ci.*;
 
+import java.io.File;
+
 public class TestCloneJob {
   @Test
   public void testCloneJobTestPass() {
@@ -19,7 +21,11 @@ public class TestCloneJob {
       Event cloneEvent = queue.pop();
       Assert.assertEquals(Event.Status.SUCCESSFUL, cloneEvent.getStatus());
       Assert.assertEquals("The repository is cloned successfully", cloneEvent.getMessage());
-    } catch (InterruptedException e) {
+
+      String command = "rm -rf " + event.getId();
+      Runtime.getRuntime().exec(command, null, new File(".")).waitFor();
+
+    } catch (Exception e) {
       System.out.println(e);
       Assert.fail();
     }
@@ -32,9 +38,9 @@ public class TestCloneJob {
         new Event("wrong_id", Event.Type.CLONE, Event.Status.SUCCESSFUL, "Nothing", "bcbb");
     CloneJob job = new CloneJob(event, queue);
     job.run();
-    Event cloneEvenet = queue.pop();
-    Assert.assertEquals(Event.Type.CLONE, cloneEvenet.getType());
-    Assert.assertEquals(Event.Status.FAIL, cloneEvenet.getStatus());
-    Assert.assertEquals("Could not clone repository", cloneEvenet.getMessage());
+    Event cloneEvent = queue.pop();
+    Assert.assertEquals(Event.Type.CLONE, cloneEvent.getType());
+    Assert.assertEquals(Event.Status.FAIL, cloneEvent.getStatus());
+    Assert.assertEquals("Could not clone repository", cloneEvent.getMessage());
   }
 }

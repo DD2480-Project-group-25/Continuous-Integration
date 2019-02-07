@@ -59,7 +59,7 @@ public class CloneJob implements Runnable {
         Process p = Runtime.getRuntime().exec(command, null, new File(directory));
         Scanner s = new Scanner(p.getErrorStream()).useDelimiter("\\A");
         String result = s.hasNext() ? s.next() : "";
-        if (result.contains("fatal")) {
+        if (result.contains("fatal: repository")) {
           throw new IOException();
         }
         queue.insert(
