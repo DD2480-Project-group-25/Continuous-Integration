@@ -6,7 +6,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-/** A job for notifying Github about builds and testing.*/
+/** A job for notifying Github about builds and testing. */
 public class NotifyJob implements Runnable {
   private Event event;
   private EventQueue queue;
