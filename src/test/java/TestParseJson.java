@@ -208,15 +208,24 @@ public class TestParseJson {
           + "}";
 
   @Test
-  public void testParseCommit() {
-    String res = CiServer.parseJsonString(json, "after");
+  public void testParseCommitID() {
+    String[] arg = new String[] {"after"};
+    String res = CiServer.parseJsonString(json, arg);
     Assert.assertEquals("9fc4d28b68c20a2e5c064d91b955d9c529b86a15", res);
   }
 
   @Test
+  public void testParseCommitURL() {
+    String[] url = new String[] {"repository", "html_url"};
+    String res = CiServer.parseJsonString(json,url);
+    Assert.assertEquals("https://github.com/DD2480-Project-group-25/Continuous-Integration", res);
+  }
+
+  @Test
   public void testParseInvalid() {
+    String[] arg = new String[] {"after"};
     String invalidJson = ": \"MDQ6VXNlcjM0NDQ2MTE5\",";
-    String res = CiServer.parseJsonString(invalidJson, "after");
-    Assert.assertEquals("INVALID", res);
+    String res = CiServer.parseJsonString(invalidJson, arg);
+    Assert.assertEquals("", res);
   }
 }
