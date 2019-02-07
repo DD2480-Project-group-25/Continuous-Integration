@@ -1,11 +1,9 @@
 package se.kth.dd2480.grp25.ci;
 
-import sun.net.www.http.HttpClient;
-
-import java.io.File;
+import javax.net.ssl.HttpsURLConnection;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 /**
@@ -32,14 +30,20 @@ public class NotifyJob implements Runnable {
     @Override
     public void run() {
         try{
-            String command = "curl -X POST -H ‘Content-Type: application/json’ --data ‘{“state”: “success”, “description“: “Build successful“}’ https://<token>:x-oauth-basic@api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/statuses/" + event.getId();
-            Process p = Runtime.getRuntime().exec(command, null, new File("."));
+            String command = "curl -X POST -H \'Content-Type:application/json\' --data \'{\"state\":\"success\",\"target_url\":\"https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/build/321c3452974ccfa0d4fb11d7b584f68472fcbabc\",\"description\":\"BuildSuccessful\",\"context\":\"own_ci\"}\' https://9ed1fe6ed2dbbe03fcf1dd10b7f525fa828e468b:x-oauth-basic@api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/statuses/321c3452974ccfa0d4fb11d7b584f68472fcbabc\n";
+            String params = "{\"state\":\"success\",\"target_url\":\"https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/build/321c3452974ccfa0d4fb11d7b584f68472fcbabc\",\"description\":\"BuildSuccessful\",\"context\":\"own_ci\"}";
+            System.out.println(command);
+            URL url = new URL("https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/statuses/321c3452974ccfa0d4fb11d7b584f68472fcbabc");
+            //URL url = new URL("https://postman-echo.com/post");
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(params.getBytes(StandardCharsets.UTF_8));
+                System.out.println(conn.getResponseCode());
+            }
         }catch(Exception e){
-            System.out.println("Exception");
+            System.out.println(e);
         }
-    }
-
-    public static void main(String[] args){
-
     }
 }
