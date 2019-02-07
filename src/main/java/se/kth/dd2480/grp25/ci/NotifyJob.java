@@ -1,7 +1,7 @@
 package se.kth.dd2480.grp25.ci;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -30,20 +30,39 @@ public class NotifyJob implements Runnable {
     @Override
     public void run() {
         try{
-            String command = "curl -X POST -H \'Content-Type:application/json\' --data \'{\"state\":\"success\",\"target_url\":\"https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/build/321c3452974ccfa0d4fb11d7b584f68472fcbabc\",\"description\":\"BuildSuccessful\",\"context\":\"own_ci\"}\' https://:x-oauth-basic@api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/statuses/321c3452974ccfa0d4fb11d7b584f68472fcbabc\n";
-            String params = "{\"state\":\"success\",\"target_url\":\"https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/build/321c3452974ccfa0d4fb11d7b584f68472fcbabc\",\"description\":\"BuildSuccessful\",\"context\":\"own_ci\"}";
-            System.out.println(command);
-            URL url = new URL("https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/statuses/321c3452974ccfa0d4fb11d7b584f68472fcbabc");
-            //URL url = new URL("https://postman-echo.com/post");
-            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-            conn.setDoOutput(true);
+            String buildSuccessful = "\"All tests passed!\"";
+            String buildFail = "\"Build fail\"";
+            String testFail = "\"Some tests failed\"";
+            URL url = new URL("https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/statuses/" + event.getId() + "?access_token=da82f7ee52d65a37086b016d2551a9e939f07a14");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
             try (OutputStream os = conn.getOutputStream()) {
+                String params = "";
+                if (event.getType() == Event.EventType.BUILD) {
+                    if (event.getStatusCode() == Event.StatusCode.FAIL) {
+                        params = createParams(buildFail);
+                    }
+                }
+                if (event.getType() == Event.EventType.TEST) {
+                    if (event.getStatusCode() == Event.StatusCode.SUCCESSFUL) {
+                        params = createParams(buildSuccessful);
+                    } else {
+                        params = createParams(testFail);
+                    }
+                }
                 os.write(params.getBytes(StandardCharsets.UTF_8));
                 System.out.println(conn.getResponseCode());
+                os.flush();
             }
         }catch(Exception e){
             System.out.println(e);
         }
+    }
+
+    private String createParams(String message) {
+        String params = "{\"state\":\"success\",\"target_url\":\"https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/build/" + event.getId()+ "\",\"description\":" + message +",\"context\":\"own_ci\"}";
+        return params;
     }
 }
