@@ -65,13 +65,23 @@ public class CiServer {
       System.err.println(e);
     }
 
-    // Parse payload from POST request, "after" is the commit hash
     String[] arg = new String[] {"after"};
     String commitID = parseJsonString(req_body, arg);
+
+    // Get repository name
     String[] repo = new String[] {"repository", "full_name"};
     String repoName = parseJsonString(req_body, repo);
 
-    if (commitID == "" || repoName == "") {
+    // Get branch name
+    String[] branch = new String[] {"ref"};
+    String branchName = parseJsonString(req_body, branch);
+
+    // "Sanitize" branch name
+    branchName = branchName.replace("refs/heads/", "");
+
+    System.out.println(branchName);
+
+    if (commitID.equals("") || repoName.equals("") || branchName.equals("")) {
       // Should perhaps be logged
       System.err.println("Invalid JSON file provided");
       return;
