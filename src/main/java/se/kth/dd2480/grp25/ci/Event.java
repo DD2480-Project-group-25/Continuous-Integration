@@ -4,6 +4,7 @@ package se.kth.dd2480.grp25.ci;
 public class Event {
 
   public enum EventType {
+    WEB_HOOK,
     CLONE,
     BUILD,
     TEST,
@@ -21,6 +22,7 @@ public class Event {
   private final EventType type;
   private StatusCode code;
   private String message;
+  private String repository;
 
   public Event(String id, EventType type) {
     this.id = id;
@@ -51,4 +53,8 @@ public class Event {
   public void setStatusCode(StatusCode code) {
     this.code = code;
   }
+
+  public String getRepository() { return repository; }
+
+  public void setRepository(String repository) { this.repository = repository; }
 }
