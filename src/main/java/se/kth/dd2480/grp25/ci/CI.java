@@ -4,11 +4,13 @@ import java.io.IOException;
 
 /** Entry class. */
 public class CI {
+
   public static void main(String[] args) {
+    final int port = 8000;
     EventQueue q = new EventQueue();
     CiServer server = null;
     try {
-      server = new CiServer(q);
+      server = new CiServer(q, port);
     } catch (IOException e) {
       System.err.println("Can't start web server!");
       e.printStackTrace();

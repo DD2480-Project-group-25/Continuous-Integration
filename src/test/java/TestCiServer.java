@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 import org.junit.Assert;
 import org.junit.Test;
 import se.kth.dd2480.grp25.ci.CiServer;
@@ -11,10 +12,14 @@ public class TestCiServer {
   /** Test that the server responds when connecting to localhost on port 8000 */
   @Test(expected = Test.None.class)
   public void testResponseOK() {
+
+    // Generate random port between 10000-60000
+    Random rand = new Random();
+    int randPort = rand.nextInt(50000) + 10000;
     try {
       EventQueue queue = new EventQueue();
-      CiServer server = new CiServer(queue);
-      URL url = new URL("http://localhost:8000");
+      CiServer server = new CiServer(queue, randPort);
+      URL url = new URL("http://localhost:" + randPort);
       URLConnection connection = url.openConnection();
       BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
       String responseResult = in.readLine();
@@ -29,13 +34,16 @@ public class TestCiServer {
 
   @Test
   public void testPositiveHook() {
-    String json = "{\"after\": \"9fc4d28b68c20a2e5c064d91b955d9c529b86a15\"}";
+    Random rand = new Random();
+    int randPort = rand.nextInt(50000) + 10000;
+
+    String json = "{\"after\": \"9fc4d28b68c20a2e5c064d91b955d9c529b86a1\"}";
     int responseCode;
     byte[] postData = json.getBytes(StandardCharsets.UTF_8);
     try {
       EventQueue queue = new EventQueue();
-      CiServer server = new CiServer(queue);
-      URL url = new URL("http://localhost:8000/hooks/github");
+      CiServer server = new CiServer(queue, randPort);
+      URL url = new URL("http://localhost:" + randPort + "/hooks/github");
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
       connection.setDoOutput(true);

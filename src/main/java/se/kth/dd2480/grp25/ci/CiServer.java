@@ -17,10 +17,9 @@ import java.net.InetSocketAddress;
  */
 public class CiServer {
   private HttpServer server;
-  private final int port = 8000;
   private final EventQueue eventQueue;
 
-  public CiServer(EventQueue queue) throws IOException {
+  public CiServer(EventQueue queue, int port) throws IOException {
     eventQueue = queue;
     server = HttpServer.create(new InetSocketAddress(port), 0);
     server.createContext("/").setHandler(CiServer::handleHttpRequest);
