@@ -44,7 +44,7 @@ public class CloneJob implements Runnable {
     this.event = event;
     this.queue = queue;
     // set default branch to master and default directory to current directory
-    this.branch = "master";
+    this.branch = event.getBranch();
     this.directory = ".";
   }
 
