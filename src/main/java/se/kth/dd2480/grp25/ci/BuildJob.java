@@ -81,7 +81,7 @@ public class BuildJob implements Runnable {
               try {
                 queue.insert(
                     new Event(
-                        event.getId(), Event.Type.BUILD, Event.Status.FAIL, "Build succeeded."));
+                        event.getId(), Event.Type.BUILD, Event.Status.SUCCESSFUL, "Build succeeded."));
               } catch (InterruptedException e) {
                 e.printStackTrace();
               }
