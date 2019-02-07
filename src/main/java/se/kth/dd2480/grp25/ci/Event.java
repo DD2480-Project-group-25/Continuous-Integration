@@ -1,57 +1,87 @@
 package se.kth.dd2480.grp25.ci;
 
-/** An {@code Event} instance represents some important CI event. */
+/**
+ * An {@code Event} instance represents that some important CI event has completed.
+ *
+ * <p>An event should be generated when an job is completed. An event holds information about what
+ * commit ID it pertains to, what type of job generated it, if that job was successful or not, and
+ * some message from that job. An event is immutable.
+ */
 public class Event {
 
-  public enum EventType {
+  /** An enum describing the type of an {@linkplain Event}. */
+  public enum Type {
     WEB_HOOK,
     CLONE,
     BUILD,
     TEST,
     NOTIFY,
-    CLEANUP
+    CLEANUP,
+    PRINT,
+    STARTUP
   }
 
-  public enum StatusCode {
+  /** An enum describing the status of an {@linkplain Event}. */
+  public enum Status {
     SUCCESSFUL,
-    FAIL,
-    NOTISSUED
+    FAIL
   }
 
   private final String id;
-  private final EventType type;
-  private StatusCode code;
-  private String message;
+  private final Type type;
+  private final Status code;
+  private final String message;
   private String repository;
 
-  public Event(String id, EventType type) {
+  /**
+   * Create an event.
+   *
+   * @param id the commit id the event pertains to.
+   * @param type the type of job that completed and generated this event.
+   * @param status indicates if the job that generated this event was successful or not.
+   * @param message an message from the job that generated this event.
+   */
+  public Event(String id, Type type, Status status, String message) {
     this.id = id;
     this.type = type;
-    this.code = StatusCode.NOTISSUED;
+    this.code = status;
+    this.message = message;
   }
 
+  /**
+   * Get the commit ID pertaining to this event.
+   *
+   * @return the commit ID pertaining to this event.
+   */
   public String getId() {
     return id;
   }
 
-  public EventType getType() {
+  /**
+   * Get the type of job that generated this event.
+   *
+   * @return the type of job that generated this event.
+   */
+  public Type getType() {
     return type;
   }
 
+  /**
+   * Get the message from the job that generated this event.
+   *
+   * @return the message from the job that generated this event.
+   */
   public String getMessage() {
     return message;
   }
 
-  public void setMessage(String message) {
-    this.message = message;
-  }
-
-  public StatusCode getStatusCode() {
+  /**
+   * Get the status of the job that generated this event.
+   *
+   * @return the status of the job that generated this event.
+   */
+  public Status getStatus() {
     return code;
-  }
-
-  public void setStatusCode(StatusCode code) {
-    this.code = code;
   }
 
   public String getRepository() {

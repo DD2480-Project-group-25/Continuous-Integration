@@ -8,10 +8,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * An {@linkplain EventRunner} delegates events from an {@link EventQueue} to instances of {@link
- * JobAcceptor}.
+ * JobExaminer}.
  */
 public class EventRunner implements Runnable {
-  private List<JobAcceptor> handlers = new LinkedList<>();
+  private List<JobExaminer> handlers = new LinkedList<>();
   private EventQueue queue;
   private Thread thread = new Thread(this);
   private boolean stop = false;
@@ -60,11 +60,11 @@ public class EventRunner implements Runnable {
   }
 
   /**
-   * Register an instance of {@link JobAcceptor} with this runner.
+   * Register an instance of {@link JobExaminer} with this runner.
    *
    * @param acceptor the handler to register´
    */
-  public void registerJobAcceptor(JobAcceptor acceptor) {
+  public void registerJobAcceptor(JobExaminer acceptor) {
     handlers.add(acceptor);
   }
 
@@ -83,7 +83,7 @@ public class EventRunner implements Runnable {
         break;
       }
 
-      for (JobAcceptor acceptor : handlers) {
+      for (JobExaminer acceptor : handlers) {
         acceptor.offer(event).ifPresent(executor::execute);
       }
     }
