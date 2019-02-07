@@ -28,20 +28,17 @@ public class CloneJob implements Runnable {
     this.directory = ".";
   }
   /**
-   * This function decides if it wants to accept an event and offer a {@link PrintJob}.
+   * This function decides if it wants to accept an event and offer a {@link CloneJob}.
    *
    * <p>This function confirms to the {@link JobAcceptor} interface.
    *
    * @param event the event offered to this function to accept or decline
-   * @return an print job represented by a {@link Runnable} if accepted
+   * @return a clone job represented by a {@link Runnable} if accepted
    */
   public static Optional<Runnable> offer(Event event) {
-    // 1. Decide if we want to handle this event
-    if (event instanceof WebHookEvent) {
-      // 2. If we do, return a job handler
+    if (event.getType() == Event.EventType.CLONE) {
       return Optional.of(new CloneJob(event));
     } else {
-      // 3. If we don't, return nothing
       return Optional.empty();
     }
   }
@@ -119,8 +116,10 @@ public class CloneJob implements Runnable {
         throw new IOException();
       }
       event.setStatusCode(Event.StatusCode.SUCCESSFUL);
+      event.setMessage("The repository is cloned successfully");
     } catch (IOException e) {
       System.out.println("IO Exception");
+      event.setMessage("Could not clone repository");
       event.setStatusCode(Event.StatusCode.FAIL);
     }
   }
