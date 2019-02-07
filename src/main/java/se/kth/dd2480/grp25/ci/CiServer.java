@@ -74,8 +74,6 @@ public class CiServer {
     // "Sanitize" branch name
     branchName = branchName.replace("refs/heads/", "");
 
-    System.out.println(branchName);
-
     if (commitID.equals("") || repoName.equals("") || branchName.equals("")) {
       // Should perhaps be logged
       System.err.println("Invalid JSON file provided");
@@ -83,7 +81,7 @@ public class CiServer {
     }
 
     Event webhookEvent =
-        new Event(commitID, Event.Type.WEB_HOOK, Event.Status.SUCCESSFUL, "", repoName);
+        new Event(commitID, Event.Type.WEB_HOOK, Event.Status.SUCCESSFUL, "", repoName, branchName);
     try {
       eventQueue.insert(webhookEvent);
     } catch (InterruptedException e) {
