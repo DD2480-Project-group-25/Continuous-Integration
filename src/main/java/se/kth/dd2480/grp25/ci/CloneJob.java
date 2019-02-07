@@ -4,15 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /** A job that clones a repository. */
 public class CloneJob implements Runnable {
   /**
    * A {@link JobExaminer} that creates instances of {@link TestJob}.
    *
-   * Inspect the docs for {@link JobExaminer}.
+   * <p>Inspect the docs for {@link JobExaminer}.
    */
   public static class Examiner extends JobExaminer {
 
@@ -48,66 +46,6 @@ public class CloneJob implements Runnable {
     // set default branch to master and default directory to current directory
     this.branch = "master";
     this.directory = ".";
-  }
-
-  /**
-   * This method returns the Url of the repository.
-   *
-   * @return String the repository's url.
-   */
-  public String getUrl() {
-    return url;
-  }
-
-  /**
-   * This method sets the Url of the repository. Throws IllegalArgumentException if the url is not
-   * valid.
-   */
-  public void setUrl(String url) {
-    String urlPattern =
-        "((git|ssh|http(s)?)|(git@[\\w\\.]+))(:(//)?)([\\w\\.@\\:/\\-~]+)(\\.git)(/)?";
-    Pattern p = Pattern.compile(urlPattern);
-    Matcher m = p.matcher(url);
-    if (!m.matches()) {
-      throw new IllegalArgumentException("Invalid url");
-    }
-    this.url = url;
-  }
-
-  /**
-   * This method returns the branch of the repository.
-   *
-   * @return String the repository's branch.
-   */
-  public String getBranch() {
-    return branch;
-  }
-
-  /** This method sets the branch. */
-  public void setBranch(String branch) {
-    this.branch = branch;
-  }
-
-  /**
-   * This method returns the directory where the repository is cloned.
-   *
-   * @return String the directory.
-   */
-  public String getDirectory() {
-    return directory;
-  }
-
-  /**
-   * This method sets the directory. Throws IllegalArgumentException if the directory is not valid.
-   */
-  public void setDirectory(String directory) {
-    String dPattern = "(\\.)|(\\/([a-zA-Z0-9]+)*)*";
-    Pattern p = Pattern.compile(dPattern);
-    Matcher m = p.matcher(directory);
-    if (!m.matches()) {
-      throw new IllegalArgumentException("Invalid directory");
-    }
-    this.directory = directory;
   }
 
   /** Clones a repository. By default, the master branch is cloned to the current directory */

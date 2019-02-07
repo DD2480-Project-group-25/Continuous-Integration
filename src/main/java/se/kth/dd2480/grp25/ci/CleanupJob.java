@@ -9,7 +9,7 @@ public class CleanupJob implements Runnable {
   /**
    * A {@link JobExaminer} that creates instances of {@link CloneJob}.
    *
-   * Inspect the docs for {@link JobExaminer}.
+   * <p>Inspect the docs for {@link JobExaminer}.
    */
   public static class Examiner extends JobExaminer {
 
@@ -50,7 +50,7 @@ public class CleanupJob implements Runnable {
                   event.getId(),
                   Event.Type.CLEANUP,
                   Event.Status.SUCCESSFUL,
-                  "Directory doesn't exist, nothing to cleanup."));
+                  "Directory doesn't exist, nothing to cleanup"));
           return;
         }
         String command = "rm -rf " + event.getId();
@@ -61,7 +61,7 @@ public class CleanupJob implements Runnable {
                   event.getId(),
                   Event.Type.CLEANUP,
                   Event.Status.SUCCESSFUL,
-                  "Cloned repository was successfully deleted."));
+                  "Cloned repository was successfully deleted"));
         } else {
           queue.insert(
               new Event(

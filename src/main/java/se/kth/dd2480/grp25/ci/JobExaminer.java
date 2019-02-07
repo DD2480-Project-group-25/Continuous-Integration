@@ -11,6 +11,7 @@ public abstract class JobExaminer {
 
   /**
    * Create a JobExaminer.
+   *
    * @param queue the event queue that jobs that this Examiner creates should insert events in.
    */
   public JobExaminer(EventQueue queue) {

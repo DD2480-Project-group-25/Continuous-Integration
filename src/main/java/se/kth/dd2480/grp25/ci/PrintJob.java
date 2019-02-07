@@ -7,7 +7,7 @@ public class PrintJob implements Runnable {
   /**
    * A {@link JobExaminer} that creates instances of {@link PrintJob}.
    *
-   * Inspect the docs for {@link JobExaminer}.
+   * <p>Inspect the docs for {@link JobExaminer}.
    */
   public static class Examiner extends JobExaminer {
     public Examiner(EventQueue queue) {

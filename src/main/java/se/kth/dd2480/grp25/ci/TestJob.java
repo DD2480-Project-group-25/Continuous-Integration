@@ -13,7 +13,7 @@ public class TestJob implements Runnable {
   /**
    * A {@link JobExaminer} that creates instances of {@link TestJob}.
    *
-   * Inspect the docs for {@link JobExaminer}.
+   * <p>Inspect the docs for {@link JobExaminer}.
    */
   public static class Examiner extends JobExaminer {
 
@@ -32,7 +32,7 @@ public class TestJob implements Runnable {
   private Event event;
   private EventQueue queue;
 
-  private TestJob(Event event, EventQueue queue) {
+  public TestJob(Event event, EventQueue queue) {
     this.event = event;
     this.queue = queue;
   }
