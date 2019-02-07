@@ -61,10 +61,17 @@ public class CloneJob implements Runnable {
         if (result.contains("fatal")) {
           throw new IOException();
         }
-        queue.insert(new Event(event.getId(), Event.Type.CLONE, Event.Status.SUCCESSFUL, "The repository is cloned successfully"));
+        queue.insert(
+            new Event(
+                event.getId(),
+                Event.Type.CLONE,
+                Event.Status.SUCCESSFUL,
+                "The repository is cloned successfully"));
       } catch (IOException e) {
         System.err.println(e.getMessage());
-        queue.insert(new Event(event.getId(), Event.Type.CLONE, Event.Status.FAIL, "Could not clone repository"));
+        queue.insert(
+            new Event(
+                event.getId(), Event.Type.CLONE, Event.Status.FAIL, "Could not clone repository"));
       }
     } catch (InterruptedException e) {
       e.printStackTrace();
