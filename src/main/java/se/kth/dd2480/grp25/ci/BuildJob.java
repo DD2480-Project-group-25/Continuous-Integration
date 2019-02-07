@@ -28,8 +28,8 @@ public class BuildJob implements Runnable {
     @Override
     public Optional<Runnable> offer(Event event) {
       return event.getType() == Event.Type.CLONE && event.getStatus() == Event.Status.SUCCESSFUL
-              ? Optional.of(new BuildJob(event, super.queue))
-              : Optional.empty();
+          ? Optional.of(new BuildJob(event, super.queue))
+          : Optional.empty();
     }
   }
 
@@ -54,7 +54,12 @@ public class BuildJob implements Runnable {
 
     if (!project.exists()) {
       try {
-        queue.insert(new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, String.format("project directory not found at: %s", path)));
+        queue.insert(
+            new Event(
+                event.getId(),
+                Event.Type.BUILD,
+                Event.Status.FAIL,
+                String.format("project directory not found at: %s", path)));
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
@@ -74,7 +79,9 @@ public class BuildJob implements Runnable {
           new ResultHandler<Void>() {
             public void onComplete(Void result) {
               try {
-                queue.insert(new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, "Build succeeded."));
+                queue.insert(
+                    new Event(
+                        event.getId(), Event.Type.BUILD, Event.Status.FAIL, "Build succeeded."));
               } catch (InterruptedException e) {
                 e.printStackTrace();
               }
@@ -88,7 +95,8 @@ public class BuildJob implements Runnable {
                 message = "Build failed because of unexpected exception: " + failure.toString();
               }
               try {
-                queue.insert(new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, message));
+                queue.insert(
+                    new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, message));
               } catch (InterruptedException e) {
                 e.printStackTrace();
               }
@@ -96,7 +104,12 @@ public class BuildJob implements Runnable {
           });
     } catch (IllegalStateException e) {
       try {
-        queue.insert(new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, "Connection was closed during build."));
+        queue.insert(
+            new Event(
+                event.getId(),
+                Event.Type.BUILD,
+                Event.Status.FAIL,
+                "Connection was closed during build."));
       } catch (InterruptedException e1) {
         e1.printStackTrace();
       }
