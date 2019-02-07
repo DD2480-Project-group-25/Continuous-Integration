@@ -1,7 +1,9 @@
 package se.kth.dd2480.grp25.ci;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
+import java.util.Scanner;
 import org.gradle.tooling.*;
 
 /** A job that builds a project given by an Event object of EventType 'BUILD'. */
@@ -71,13 +73,46 @@ public class BuildJob implements Runnable {
     }
   }
 
+  private void launch(ProjectConnection con) {
+    try {
+      File dir = new File(path);
+      if (!dir.exists()) {
+        queue.insert(
+            new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, "Dir doesn't exist"));
+      }
+      try {
+        String command = "gradle build";
+        Process p = Runtime.getRuntime().exec(command, null, new File("."));
+
+        Scanner s = new Scanner(p.getErrorStream()).useDelimiter("\\A");
+        String result = s.hasNext() ? s.next() : "";
+        if (result.contains("FAILED")) {
+          throw new IOException();
+        }
+        queue.insert(
+            new Event(
+                event.getId(), Event.Type.BUILD, Event.Status.SUCCESSFUL, "Build succeeded."));
+      } catch (Exception e) {
+        System.err.println(e);
+        queue.insert(
+            new Event(
+                event.getId(), Event.Type.BUILD, Event.Status.FAIL, "Could not build project"));
+      }
+    } catch (InterruptedException ie) {
+      System.err.println(ie);
+    }
+  }
+
   /** A help function to launch and execute a build on a connection. */
+  /*
   private void launch(ProjectConnection con) {
     try {
       BuildLauncher build = con.newBuild();
+      build.forTasks("clean");
       build.run(
           new ResultHandler<Void>() {
             public void onComplete(Void result) {
+              System.out.println(result);
               try {
                 queue.insert(
                     new Event(
@@ -119,5 +154,5 @@ public class BuildJob implements Runnable {
     } finally {
       con.close();
     }
-  }
+  }*/
 }
