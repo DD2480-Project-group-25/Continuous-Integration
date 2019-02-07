@@ -22,6 +22,7 @@ public class CI {
       new BuildJob.Examiner(q),
       new CleanupJob.Examiner(q),
       new LogJob.Examiner(q),
+      new NotifyJob.Examiner(q)
     };
     EventRunner d = new EventRunner(q);
 
