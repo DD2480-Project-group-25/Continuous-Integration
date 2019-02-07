@@ -238,3 +238,5 @@ gradle-app.setting
 **/build/
 
 # End of https://www.gitignore.io/api/vim,git,java,emacs,macos,gradle,intellij
+
+\.idea/*
