@@ -19,7 +19,7 @@ public class TestCiServer {
     try {
       EventQueue queue = new EventQueue();
       CiServer server = new CiServer(queue, randPort);
-      URL url = new URL("http://localhost:8000");
+      URL url = new URL("http://localhost:" + randPort);
       URLConnection connection = url.openConnection();
       BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
       String responseResult = in.readLine();
@@ -37,13 +37,13 @@ public class TestCiServer {
     Random rand = new Random();
     int randPort = rand.nextInt(50000) + 10000;
 
-    String json = "{\"after\": \"9fc4d28b68c20a2e5c064d91b955d9c529b86a15\"}";
+    String json = "{\"after\": \"9fc4d28b68c20a2e5c064d91b955d9c529b86a1\"}";
     int responseCode;
     byte[] postData = json.getBytes(StandardCharsets.UTF_8);
     try {
       EventQueue queue = new EventQueue();
       CiServer server = new CiServer(queue, randPort);
-      URL url = new URL("http://localhost:8000/hooks/github");
+      URL url = new URL("http://localhost:" + randPort + "/hooks/github");
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
       connection.setDoOutput(true);
