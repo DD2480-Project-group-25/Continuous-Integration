@@ -10,18 +10,31 @@ import org.gradle.tooling.*;
  * to the following structure: [path to project dir]/src/test/java/[all tests]
  */
 public class TestJob implements Runnable {
-  private Event event;
+  /**
+   * A {@link JobExaminer} that creates instances of {@link TestJob}.
+   *
+   * <p>Inspect the docs for {@link JobExaminer}.
+   */
+  public static class Examiner extends JobExaminer {
 
-  public TestJob(Event event) {
-    this.event = event;
+    public Examiner(EventQueue queue) {
+      super(queue);
+    }
+
+    @Override
+    public Optional<Runnable> offer(Event event) {
+      return event.getType() == Event.Type.BUILD && event.getStatus() == Event.Status.SUCCESSFUL
+          ? Optional.of(new TestJob(event, super.queue))
+          : Optional.empty();
+    }
   }
 
-  public static Optional<Runnable> offer(Event event) {
-    if (event.getType() == Event.EventType.TEST) {
-      return Optional.of(new TestJob(event));
-    } else {
-      return Optional.empty();
-    }
+  private Event event;
+  private EventQueue queue;
+
+  public TestJob(Event event, EventQueue queue) {
+    this.event = event;
+    this.queue = queue;
   }
 
   /**
@@ -52,19 +65,38 @@ public class TestJob implements Runnable {
           new ResultHandler<Void>() {
             @Override
             public void onComplete(Void result) {
-              event.setMessage("All tests passed.");
-              event.setStatusCode(Event.StatusCode.SUCCESSFUL);
+              try {
+                queue.insert(
+                    new Event(
+                        event.getId(),
+                        Event.Type.TEST,
+                        Event.Status.SUCCESSFUL,
+                        "All tests passed."));
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              }
             }
 
             @Override
             public void onFailure(GradleConnectionException failure) {
-              event.setMessage(failure.getCause().toString());
-              event.setStatusCode(Event.StatusCode.FAIL);
+              try {
+                queue.insert(
+                    new Event(
+                        event.getId(),
+                        Event.Type.TEST,
+                        Event.Status.FAIL,
+                        failure.getCause().toString()));
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              }
             }
           });
     } catch (Exception e) {
-      event.setMessage("CI Server error: " + e);
-      event.setStatusCode(Event.StatusCode.FAIL);
+      try {
+        queue.insert(new Event(event.getId(), Event.Type.TEST, Event.Status.FAIL, e.getMessage()));
+      } catch (InterruptedException e1) {
+        e1.printStackTrace();
+      }
     } finally {
       conn.close();
     }
