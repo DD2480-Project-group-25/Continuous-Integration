@@ -1,9 +1,20 @@
 package se.kth.dd2480.grp25.ci;
 
+import java.io.IOException;
+
 /** Entry class. */
 public class CI {
   public static void main(String[] args) {
     EventQueue q = new EventQueue();
+    CiServer server = null;
+    try {
+      server = new CiServer(q);
+    } catch (IOException e) {
+      System.err.println("Can't start web server!");
+      e.printStackTrace();
+      System.exit(-1);
+    }
+
     JobExaminer[] acceptors = {
       new PrintJob.Examiner(q),
       new CloneJob.Examiner(q),
@@ -17,30 +28,7 @@ public class CI {
     for (JobExaminer acceptor : acceptors) {
       d.registerJobAcceptor(acceptor);
     }
+
     d.start();
-    try {
-      q.insert(
-          new Event(
-              Long.toHexString(System.nanoTime()),
-              Event.Type.STARTUP,
-              Event.Status.SUCCESSFUL,
-              "1"));
-    } catch (InterruptedException ignored) {
-      System.err.println(
-          "Interrupted while trying to insert event into queue, event not inserted.");
-    }
-
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException ignored) {
-      System.err.println("Interrupted while sleeping.");
-    }
-
-    d.stop();
-    try {
-      d.join();
-    } catch (InterruptedException ignored) {
-      System.err.println("Interrupted while waiting for event runner to stop.");
-    }
   }
 }

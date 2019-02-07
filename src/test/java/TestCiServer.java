@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import org.junit.Assert;
 import org.junit.Test;
 import se.kth.dd2480.grp25.ci.CiServer;
+import se.kth.dd2480.grp25.ci.EventQueue;
 
 public class TestCiServer {
 
@@ -11,7 +12,8 @@ public class TestCiServer {
   @Test(expected = Test.None.class)
   public void testResponseOK() {
     try {
-      CiServer server = new CiServer();
+      EventQueue queue = new EventQueue();
+      CiServer server = new CiServer(queue);
       URL url = new URL("http://localhost:8000");
       URLConnection connection = url.openConnection();
       BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -31,7 +33,8 @@ public class TestCiServer {
     int responseCode;
     byte[] postData = json.getBytes(StandardCharsets.UTF_8);
     try {
-      CiServer server = new CiServer();
+      EventQueue queue = new EventQueue();
+      CiServer server = new CiServer(queue);
       URL url = new URL("http://localhost:8000/hooks/github");
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
