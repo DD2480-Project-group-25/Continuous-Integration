@@ -1,6 +1,7 @@
 package se.kth.dd2480.grp25.ci;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
@@ -39,47 +40,63 @@ public class CiServer {
     os.close();
   }
 
-  private static void handleWebhook(HttpExchange exchange) throws IOException {
-    if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
-      exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-    } else {
-      exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
-      exchange.close();
-      return;
-    }
-
-    int i;
+  private static void handleWebhook(HttpExchange exchange) {
     String req_body = "";
-    InputStream is = exchange.getRequestBody();
-    // Read all content of input stream
-    while ((i = is.read()) != -1) {
-      req_body += (char) i;
-    }
+    try {
+      if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
+        exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+      } else {
+        exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+        exchange.close();
+        return;
+      }
+
+      int i;
+      InputStream is = exchange.getRequestBody();
+      // Read all content of input stream
+      while ((i = is.read()) != -1) {
+        req_body += (char) i;
+      }
 
     is.close();
     exchange.close();
+    } catch (Exception e) {
+      System.err.println(e);
+    }
 
     // Parse payload from POST request, "after" is the commit hash
-    String commitID = parseJsonString(req_body, "after");
+    String[] arg = new String[] {"after"};
+    String commitID = parseJsonString(req_body, arg);
+    String[] url = new String[] {"repository", "html_url"};
+    String repoURL = parseJsonString(req_body,url);
 
-    if (commitID == "INVALID") {
+    if (commitID == "" || repoURL == "") {
       // Should perhaps be logged
-      System.out.println("Invalid JSON file provided");
+      System.err.println("Invalid JSON file provided");
       return;
     }
     System.out.println(commitID);
   }
 
-  public static String parseJsonString(String json, String arg) {
+  public static String parseJsonString(String json, String[] arg) {
     String res = "";
-    JsonParser parser;
-    parser = new JsonParser();
     try {
-      JsonElement jsonElem = parser.parse(json);
-      res = jsonElem.getAsJsonObject().get(arg).getAsString();
-    } catch (JsonSyntaxException e) {
-      // Should perhaps be written to logfile
-      res = "INVALID";
+        JsonParser parser = new JsonParser();
+        JsonElement jsonTree = parser.parse(json);
+
+        if (jsonTree.isJsonObject()) {
+          JsonObject jsonObject = jsonTree.getAsJsonObject();
+          for(int i = 0; i < arg.length; i++) {
+            if (i == arg.length - 1) {
+              JsonElement jsonElement = jsonObject.get(arg[i]);
+              res = jsonElement.getAsString();
+            } else {
+              jsonObject = jsonObject.get(arg[i]).getAsJsonObject();
+            }
+          }
+        }
+    } catch (Exception e) {
+      System.err.println(e);
     }
 
     // Remove double quotes from parsing
