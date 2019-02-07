@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'com.github.sherter.google-java-format' version '0.8'
     id 'java-gradle-plugin'
+    id 'application'
 }
 
 group 'se.kth.dd2480.grp25'
@@ -11,6 +12,10 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+}
+
+application {
+    mainClassName = 'se.kth.dd2480.grp25.ci.CI'
 }
 
 dependencies {

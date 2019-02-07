@@ -5,7 +5,12 @@ public class CI {
   public static void main(String[] args) {
     EventQueue q = new EventQueue();
     JobExaminer[] acceptors = {
-      new PrintJob.Examiner(q), new CloneJob.Examiner(q), new TestJob.Examiner(q)
+      new PrintJob.Examiner(q),
+      new CloneJob.Examiner(q),
+      new TestJob.Examiner(q),
+      new BuildJob.Examiner(q),
+      new CleanupJob.Examiner(q),
+      new LogJob.Examiner(q),
     };
     EventRunner d = new EventRunner(q);
 
