@@ -63,7 +63,7 @@ public class NotifyJob implements Runnable {
         Event notifyEvent = null;
         if (event.getType() == Event.Type.BUILD) {
           if (event.getStatus() == Event.Status.FAIL) {
-            params = createParams(buildFail);
+            params = createParams(buildFail, "failure");
             notifyEvent =
                 new Event(
                     event.getId(),
@@ -77,7 +77,7 @@ public class NotifyJob implements Runnable {
         }
         if (event.getType() == Event.Type.TEST) {
           if (event.getStatus() == Event.Status.SUCCESSFUL) {
-            params = createParams(buildSuccessful);
+            params = createParams(buildSuccessful, "success");
             notifyEvent =
                 new Event(
                     event.getId(),
@@ -85,7 +85,7 @@ public class NotifyJob implements Runnable {
                     Event.Status.SUCCESSFUL,
                     "Notified that build was successful.");
           } else {
-            params = createParams(testFail);
+            params = createParams(testFail, "failure");
             notifyEvent =
                 new Event(
                     event.getId(),
@@ -107,9 +107,11 @@ public class NotifyJob implements Runnable {
     }
   }
 
-  private String createParams(String message) {
+  private String createParams(String message, String state) {
     String params =
-        "{\"state\":\"success\",\"target_url\":\"https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/build/"
+        "{\"state\":\""
+            + state
+            + "\",\"target_url\":\"https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/build/"
             + event.getId()
             + "\",\"description\":"
             + message
