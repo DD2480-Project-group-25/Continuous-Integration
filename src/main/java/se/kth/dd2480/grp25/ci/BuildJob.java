@@ -12,7 +12,7 @@ public class BuildJob implements Runnable {
    * <p>This function confirms to the {@link JobAcceptor} interface.
    *
    * @param event the event offered to this function to accept or decline
-   * @return an print job represented by a {@link Runnable} if accepted
+   * @return a build job represented by a {@link Runnable} if accepted
    */
   public static Optional<Runnable> offer(Event event) {
     // 1. Decide if we want to handle this event
