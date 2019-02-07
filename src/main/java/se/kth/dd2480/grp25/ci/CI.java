@@ -16,7 +16,6 @@ public class CI {
     }
 
     JobExaminer[] acceptors = {
-      new PrintJob.Examiner(q),
       new CloneJob.Examiner(q),
       new TestJob.Examiner(q),
       new BuildJob.Examiner(q),

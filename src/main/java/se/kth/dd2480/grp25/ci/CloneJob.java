@@ -19,7 +19,7 @@ public class CloneJob implements Runnable {
     }
 
     /**
-     * This function decides if it wants to accept an event and offer a {@link PrintJob}.
+     * This function decides if it wants to accept an event and offer a {@link CloneJob}.
      *
      * <p>This function confirms to the {@link JobExaminer} interface.
      *
