@@ -54,7 +54,11 @@ public class Event {
     this.code = code;
   }
 
-  public String getRepository() { return repository; }
+  public String getRepository() {
+    return repository;
+  }
 
-  public void setRepository(String repository) { this.repository = repository; }
+  public void setRepository(String repository) {
+    this.repository = repository;
+  }
 }

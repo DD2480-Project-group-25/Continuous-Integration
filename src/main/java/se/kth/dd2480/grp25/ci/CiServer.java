@@ -3,7 +3,6 @@ package se.kth.dd2480.grp25.ci;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
@@ -60,8 +59,8 @@ public class CiServer {
         req_body += (char) i;
       }
 
-    is.close();
-    exchange.close();
+      is.close();
+      exchange.close();
     } catch (Exception e) {
       System.err.println(e);
     }
@@ -91,20 +90,20 @@ public class CiServer {
   public static String parseJsonString(String json, String[] arg) {
     String res = "";
     try {
-        JsonParser parser = new JsonParser();
-        JsonElement jsonTree = parser.parse(json);
+      JsonParser parser = new JsonParser();
+      JsonElement jsonTree = parser.parse(json);
 
-        if (jsonTree.isJsonObject()) {
-          JsonObject jsonObject = jsonTree.getAsJsonObject();
-          for(int i = 0; i < arg.length; i++) {
-            if (i == arg.length - 1) {
-              JsonElement jsonElement = jsonObject.get(arg[i]);
-              res = jsonElement.getAsString();
-            } else {
-              jsonObject = jsonObject.get(arg[i]).getAsJsonObject();
-            }
+      if (jsonTree.isJsonObject()) {
+        JsonObject jsonObject = jsonTree.getAsJsonObject();
+        for (int i = 0; i < arg.length; i++) {
+          if (i == arg.length - 1) {
+            JsonElement jsonElement = jsonObject.get(arg[i]);
+            res = jsonElement.getAsString();
+          } else {
+            jsonObject = jsonObject.get(arg[i]).getAsJsonObject();
           }
         }
+      }
     } catch (Exception e) {
       System.err.println(e);
     }

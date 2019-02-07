@@ -217,7 +217,7 @@ public class TestParseJson {
   @Test
   public void testParseCommitURL() {
     String[] url = new String[] {"repository", "full_name"};
-    String res = CiServer.parseJsonString(json,url);
+    String res = CiServer.parseJsonString(json, url);
     Assert.assertEquals("DD2480-Project-group-25/Continuous-Integration", res);
   }
 
