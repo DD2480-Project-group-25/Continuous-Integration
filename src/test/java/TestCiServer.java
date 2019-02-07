@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import org.junit.Assert;
 import org.junit.Test;
 import se.kth.dd2480.grp25.ci.CiServer;
-import se.kth.dd2480.grp25.ci.Event;
 import se.kth.dd2480.grp25.ci.EventQueue;
 
 public class TestCiServer {

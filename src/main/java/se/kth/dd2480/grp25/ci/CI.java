@@ -1,7 +1,6 @@
 package se.kth.dd2480.grp25.ci;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 /** Entry class. */
 public class CI {
