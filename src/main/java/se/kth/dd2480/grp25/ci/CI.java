@@ -7,6 +7,7 @@ public class CI {
 
   /**
    * Entry point.
+   *
    * @param args not used.
    */
   public static void main(String[] args) {

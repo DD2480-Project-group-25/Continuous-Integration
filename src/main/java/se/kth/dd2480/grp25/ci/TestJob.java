@@ -28,6 +28,7 @@ public class TestJob implements Runnable {
 
     /**
      * Accepts successful build events and discards all other.
+     *
      * @param event the offered event.
      * @return an optional with a {@link TestJob} instance if accepted.
      */

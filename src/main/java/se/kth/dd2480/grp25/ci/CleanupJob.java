@@ -24,6 +24,7 @@ public class CleanupJob implements Runnable {
 
     /**
      * Determines if an event should be accepted and a job created.
+     *
      * @param event the offered event.
      * @return an optional of an CleanupJob if event is accepted, otherwise empty optional.
      */

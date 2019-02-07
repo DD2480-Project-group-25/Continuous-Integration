@@ -38,7 +38,8 @@ public class CiServer {
   /**
    * Hello world endpoint.
    *
-   * Used to confirm that server is online.
+   * <p>Used to confirm that server is online.
+   *
    * @param exchange the exchange used for this request.
    * @throws IOException may be thrown.
    */
@@ -113,7 +114,7 @@ public class CiServer {
   /**
    * Parses GitHub webhook json object.
    *
-   * For internal use.
+   * <p>For internal use.
    *
    * @param json the json to be parsed-
    * @param arg the elements to be picked out.
