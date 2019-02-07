@@ -30,11 +30,5 @@ public class CI {
     }
 
     d.start();
-
-    try {
-      q.insert(new Event("test", Event.Type.PRINT, Event.Status.SUCCESSFUL, ""));
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
   }
 }
