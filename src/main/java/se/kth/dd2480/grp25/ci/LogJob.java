@@ -2,6 +2,9 @@ package se.kth.dd2480.grp25.ci;
 
 import java.util.Optional;
 
+/**
+ * A job that logs every event to standard out.
+ */
 public class LogJob implements Runnable {
   public static class Examiner extends JobExaminer {
 
@@ -14,6 +17,11 @@ public class LogJob implements Runnable {
       super(queue);
     }
 
+    /**
+     * Accepts every event.
+     * @param event the offered event
+     * @return an optional with an {@link LogJob} instance.
+     */
     @Override
     public Optional<Runnable> offer(Event event) {
       return Optional.of(new LogJob(event));
@@ -22,10 +30,17 @@ public class LogJob implements Runnable {
 
   private Event event;
 
+  /**
+   * Create a new {@linkplain LogJob} instance.
+   * @param event the event that should be logged.
+   */
   public LogJob(Event event) {
     this.event = event;
   }
 
+  /**
+   * Print the event to standard out.
+   */
   @Override
   public void run() {
     StringBuilder builder = new StringBuilder();

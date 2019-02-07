@@ -28,6 +28,12 @@ public class NotifyJob implements Runnable {
     }
   }
 
+  /**
+   * Create an instance of {@linkplain NotifyJob}.
+   *
+   * @param event the event that this job should process.
+   * @param queue the queue that this job may append new events to.
+   */
   public NotifyJob(Event event, EventQueue queue) {
     this.event = event;
     this.queue = queue;

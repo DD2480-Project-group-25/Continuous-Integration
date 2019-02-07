@@ -5,6 +5,10 @@ import java.io.IOException;
 /** Entry class. */
 public class CI {
 
+  /**
+   * Entry point.
+   * @param args not used.
+   */
   public static void main(String[] args) {
     final int port = 8000;
     EventQueue q = new EventQueue();

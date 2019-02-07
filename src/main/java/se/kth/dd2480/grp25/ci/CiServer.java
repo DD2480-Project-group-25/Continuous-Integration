@@ -19,6 +19,13 @@ public class CiServer {
   private HttpServer server;
   private final EventQueue eventQueue;
 
+  /**
+   * Create a {@linkplain CiServer} instance.
+   *
+   * @param queue the queue were events should be published.
+   * @param port the port were the server should listen.
+   * @throws IOException may be thrown if the server can't be created.
+   */
   public CiServer(EventQueue queue, int port) throws IOException {
     eventQueue = queue;
     server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -28,6 +35,13 @@ public class CiServer {
     System.out.println("Server running...");
   }
 
+  /**
+   * Hello world endpoint.
+   *
+   * Used to confirm that server is online.
+   * @param exchange the exchange used for this request.
+   * @throws IOException may be thrown.
+   */
   private static void handleHttpRequest(HttpExchange exchange) throws IOException {
     String response = "Hello World!";
     exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.getBytes().length);
@@ -36,6 +50,11 @@ public class CiServer {
     os.close();
   }
 
+  /**
+   * GitHub webhook endpoint.
+   *
+   * @param exchange the exchange used for this request.
+   */
   private void handleWebhook(HttpExchange exchange) {
     String req_body = "";
     try {
@@ -91,6 +110,15 @@ public class CiServer {
     }
   }
 
+  /**
+   * Parses GitHub webhook json object.
+   *
+   * For internal use.
+   *
+   * @param json the json to be parsed-
+   * @param arg the elements to be picked out.
+   * @return the parsed data.
+   */
   public static String parseJsonString(String json, String[] arg) {
     String res = "";
     try {
