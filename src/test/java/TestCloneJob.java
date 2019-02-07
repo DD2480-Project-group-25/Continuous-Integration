@@ -1,8 +1,7 @@
+import java.io.File;
 import org.junit.Assert;
 import org.junit.Test;
 import se.kth.dd2480.grp25.ci.*;
-
-import java.io.File;
 
 public class TestCloneJob {
   @Test
