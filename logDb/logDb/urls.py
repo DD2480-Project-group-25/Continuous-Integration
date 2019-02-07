@@ -17,8 +17,10 @@ from django.conf.urls import url
 from django.contrib import admin
 
 from logDbApp.views import log
+from logDbApp.views import logView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^log/', log)
+    url(r'^log/', log),
+    url('api/', logView.as_view())
 ]
