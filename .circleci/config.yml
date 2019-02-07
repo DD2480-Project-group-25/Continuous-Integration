@@ -122,6 +122,7 @@ workflows:
   version: 2
   all_branches:
     jobs:
-      - build
+      - build:
+          context: Testing
       - javadoc
       - format
