@@ -9,41 +9,45 @@ import java.util.regex.Pattern;
 
 /** A job that clones a repository. */
 public class CloneJob implements Runnable {
+  /**
+   * A {@link JobExaminer} that creates instances of {@link TestJob}.
+   *
+   * Inspect the docs for {@link JobExaminer}.
+   */
+  public static class Examiner extends JobExaminer {
+
+    public Examiner(EventQueue queue) {
+      super(queue);
+    }
+
+    /**
+     * This function decides if it wants to accept an event and offer a {@link PrintJob}.
+     *
+     * <p>This function confirms to the {@link JobExaminer} interface.
+     *
+     * @param event the event offered to this function to accept or decline
+     * @return an print job represented by a {@link Runnable} if accepted
+     */
+    @Override
+    public Optional<Runnable> offer(Event event) {
+      return event.getType() == Event.Type.WEB_HOOK
+          ? Optional.of(new CloneJob(event, super.queue))
+          : Optional.empty();
+    }
+  }
+
   private Event event;
+  private EventQueue queue;
   private String url;
   private String branch;
   private String directory;
 
-  public CloneJob() {
-    // set default branch to master and default directory to current directory
-    this.branch = "master";
-    this.directory = ".";
-  }
-
-  public CloneJob(Event event) {
-
+  private CloneJob(Event event, EventQueue queue) {
     this.event = event;
+    this.queue = queue;
     // set default branch to master and default directory to current directory
     this.branch = "master";
     this.directory = ".";
-  }
-  /**
-   * This function decides if it wants to accept an event and offer a {@link PrintJob}.
-   *
-   * <p>This function confirms to the {@link JobAcceptor} interface.
-   *
-   * @param event the event offered to this function to accept or decline
-   * @return an print job represented by a {@link Runnable} if accepted
-   */
-  public static Optional<Runnable> offer(Event event) {
-    // 1. Decide if we want to handle this event
-    if (event instanceof WebHookEvent) {
-      // 2. If we do, return a job handler
-      return Optional.of(new CloneJob(event));
-    } else {
-      // 3. If we don't, return nothing
-      return Optional.empty();
-    }
   }
 
   /**
@@ -110,18 +114,22 @@ public class CloneJob implements Runnable {
   @Override
   public void run() {
     try {
-      String command = "git clone --branch" + " " + branch + " " + url + " " + event.getId();
-      // run the command in the given directory
-      Process p = Runtime.getRuntime().exec(command, null, new File(directory));
-      Scanner s = new Scanner(p.getErrorStream()).useDelimiter("\\A");
-      String result = s.hasNext() ? s.next() : "";
-      if (result.contains("fatal")) {
-        throw new IOException();
+      try {
+        String command = "git clone --branch" + " " + branch + " " + url + " " + event.getId();
+        // run the command in the given directory
+        Process p = Runtime.getRuntime().exec(command, null, new File(directory));
+        Scanner s = new Scanner(p.getErrorStream()).useDelimiter("\\A");
+        String result = s.hasNext() ? s.next() : "";
+        if (result.contains("fatal")) {
+          throw new IOException();
+        }
+        queue.insert(new Event(event.getId(), Event.Type.CLONE, Event.Status.SUCCESSFUL, ""));
+      } catch (IOException e) {
+        System.out.println("IO Exception");
+        queue.insert(new Event(event.getId(), Event.Type.CLONE, Event.Status.FAIL, e.getMessage()));
       }
-      event.setStatusCode(Event.StatusCode.SUCCESSFUL);
-    } catch (IOException e) {
-      System.out.println("IO Exception");
-      event.setStatusCode(Event.StatusCode.FAIL);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
   }
 }

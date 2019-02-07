@@ -5,33 +5,52 @@ import java.util.Optional;
 /** A job that prints every event to stdout. */
 public class PrintJob implements Runnable {
   /**
-   * This functions decides if it wants to accept an event and offer a {@link PrintJob}.
+   * A {@link JobExaminer} that creates instances of {@link PrintJob}.
    *
-   * <p>This function confirms to the {@link JobAcceptor} interface.
-   *
-   * @param event the event offered to this function to accept or decline
-   * @return an print job represented by a {@link Runnable} if accepted
+   * Inspect the docs for {@link JobExaminer}.
    */
-  public static Optional<Runnable> offer(Event event) {
-    // 1. Decide if we want to handle this event
-    if (true) {
-      // 2. If we do, return a job handler
-      return Optional.of(new PrintJob(event));
-    } else {
-      // 3. If we don't, return nothing
-      return Optional.empty();
+  public static class Examiner extends JobExaminer {
+    public Examiner(EventQueue queue) {
+      super(queue);
+    }
+
+    /**
+     * This functions decides if it wants to accept an event and offer a {@link PrintJob}.
+     *
+     * <p>This function confirms to the {@link JobExaminer} interface.
+     *
+     * @param event the event offered to this function to accept or decline
+     * @return an print job represented by a {@link Runnable} if accepted
+     */
+    @Override
+    public Optional<Runnable> offer(Event event) {
+      return event.getType() == Event.Type.STARTUP || event.getType() == Event.Type.PRINT
+          ? Optional.of(new PrintJob(event, super.queue))
+          : Optional.empty();
     }
   }
 
   private Event event;
+  private EventQueue queue;
 
-  private PrintJob(Event event) {
+  private PrintJob(Event event, EventQueue queue) {
     this.event = event;
+    this.queue = queue;
   }
 
   /** Prints the given event when run. */
   @Override
   public void run() {
-    System.out.println(event);
+    System.out.println(String.format("%5s", event.getMessage()));
+    try {
+      queue.insert(
+          new Event(
+              Long.toHexString(System.nanoTime()),
+              Event.Type.PRINT,
+              Event.Status.SUCCESSFUL,
+              "" + (Integer.parseInt(event.getMessage()) + 1)));
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
   }
 }
