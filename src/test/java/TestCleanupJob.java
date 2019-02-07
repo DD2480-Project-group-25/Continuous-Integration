@@ -31,7 +31,7 @@ public class TestCleanupJob {
     cleanupJob.run();
     Event generatedEvent = queue.pop();
     Assert.assertEquals(Event.Type.CLEANUP, generatedEvent.getType());
-    Assert.assertEquals(Event.Status.SUCCESSFUL, generatedEvent.getStatus());
+    Assert.assertEquals(Event.Status.FAIL, generatedEvent.getStatus());
     Assert.assertEquals("Directory doesn't exist, nothing to cleanup", generatedEvent.getMessage());
   }
 }

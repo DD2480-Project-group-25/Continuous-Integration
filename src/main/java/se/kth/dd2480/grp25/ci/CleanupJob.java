@@ -49,7 +49,7 @@ public class CleanupJob implements Runnable {
               new Event(
                   event.getId(),
                   Event.Type.CLEANUP,
-                  Event.Status.SUCCESSFUL,
+                  Event.Status.FAIL,
                   "Directory doesn't exist, nothing to cleanup"));
           return;
         }
