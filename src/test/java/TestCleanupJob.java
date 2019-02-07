@@ -10,7 +10,7 @@ public class TestCleanupJob {
   @Test
   public void testDeleteSuccessful() throws IOException, InterruptedException {
     String command = "mkdir testDirectory";
-    Runtime.getRuntime().exec(command, null, new File("."));
+    Runtime.getRuntime().exec(command, null, new File(".")).waitFor();
 
     EventQueue queue = new EventQueue();
     Event event = new Event("testDirectory", Event.Type.TEST, Event.Status.SUCCESSFUL, null);
@@ -31,7 +31,7 @@ public class TestCleanupJob {
     cleanupJob.run();
     Event generatedEvent = queue.pop();
     Assert.assertEquals(Event.Type.CLEANUP, generatedEvent.getType());
-    Assert.assertEquals(Event.Status.SUCCESSFUL, generatedEvent.getStatus());
+    Assert.assertEquals(Event.Status.FAIL, generatedEvent.getStatus());
     Assert.assertEquals("Directory doesn't exist, nothing to cleanup", generatedEvent.getMessage());
   }
 }

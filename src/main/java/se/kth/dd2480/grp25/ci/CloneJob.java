@@ -40,7 +40,7 @@ public class CloneJob implements Runnable {
   private String branch;
   private String directory;
 
-  private CloneJob(Event event, EventQueue queue) {
+  public CloneJob(Event event, EventQueue queue) {
     this.event = event;
     this.queue = queue;
     // set default branch to master and default directory to current directory
@@ -53,12 +53,13 @@ public class CloneJob implements Runnable {
   public void run() {
     try {
       try {
+        url = "https://github.com/" + event.getRepository() + ".git";
         String command = "git clone --branch" + " " + branch + " " + url + " " + event.getId();
         // run the command in the given directory
         Process p = Runtime.getRuntime().exec(command, null, new File(directory));
         Scanner s = new Scanner(p.getErrorStream()).useDelimiter("\\A");
         String result = s.hasNext() ? s.next() : "";
-        if (result.contains("fatal")) {
+        if (result.contains("fatal: repository")) {
           throw new IOException();
         }
         queue.insert(
@@ -68,7 +69,7 @@ public class CloneJob implements Runnable {
                 Event.Status.SUCCESSFUL,
                 "The repository is cloned successfully"));
       } catch (IOException e) {
-        System.err.println(e.getMessage());
+        System.err.println(e);
         queue.insert(
             new Event(
                 event.getId(), Event.Type.CLONE, Event.Status.FAIL, "Could not clone repository"));
