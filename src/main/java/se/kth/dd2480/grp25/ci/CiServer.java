@@ -20,12 +20,8 @@ public class CiServer {
   private final int port = 8000;
   private final EventQueue eventQueue;
 
-  public static void main(String[] args) throws IOException {
-    new CiServer();
-  }
-
-  public CiServer() throws IOException {
-    eventQueue = new EventQueue();
+  public CiServer(EventQueue queue) throws IOException {
+    eventQueue = queue;
     server = HttpServer.create(new InetSocketAddress(port), 0);
     server.createContext("/").setHandler(CiServer::handleHttpRequest);
     server.createContext("/hooks/github").setHandler(this::handleWebhook);
