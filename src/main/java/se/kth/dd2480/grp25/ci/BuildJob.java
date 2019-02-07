@@ -6,31 +6,41 @@ import org.gradle.tooling.*;
 
 /** A job that builds a project given by an Event object of EventType 'BUILD'. */
 public class BuildJob implements Runnable {
-  /**
-   * This functions decides if it wants to accept an event and offer a {@link BuildJob}.
-   *
-   * <p>This function confirms to the {@link JobAcceptor} interface.
-   *
-   * @param event the event offered to this function to accept or decline
-   * @return a build job represented by a {@link Runnable} if accepted
-   */
-  public static Optional<Runnable> offer(Event event) {
-    // 1. Decide if we want to handle this event
-    if (event.getType() == Event.EventType.BUILD) {
-      // 2. If we do, return a job handler
-      return Optional.of(new BuildJob(event));
-    } else {
-      // 3. If we don't, return nothing
-      return Optional.empty();
+  public static class Examiner extends JobExaminer {
+
+    /**
+     * Create a JobExaminer.
+     *
+     * @param queue the event queue that jobs that this Examiner creates should insert events in.
+     */
+    public Examiner(EventQueue queue) {
+      super(queue);
+    }
+
+    /**
+     * This functions decides if it wants to accept an event and offer a {@link BuildJob}.
+     *
+     * <p>This function confirms to the {@link JobExaminer} interface.
+     *
+     * @param event the event offered to this function to accept or decline
+     * @return a build job represented by a {@link Runnable} if accepted
+     */
+    @Override
+    public Optional<Runnable> offer(Event event) {
+      return event.getType() == Event.Type.CLONE && event.getStatus() == Event.Status.SUCCESSFUL
+              ? Optional.of(new BuildJob(event, super.queue))
+              : Optional.empty();
     }
   }
 
   private Event event;
   private String path;
+  private EventQueue queue;
 
-  public BuildJob(Event event) {
+  public BuildJob(Event event, EventQueue queue) {
     this.event = event;
     this.path = "./" + event.getId();
+    this.queue = queue;
   }
 
   /**
@@ -43,8 +53,11 @@ public class BuildJob implements Runnable {
     File project = (new File(path));
 
     if (!project.exists()) {
-      event.setStatusCode(Event.StatusCode.FAIL);
-      event.setMessage("project directory not found at: " + path);
+      try {
+        queue.insert(new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, String.format("project directory not found at: %s", path)));
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
     } else {
       ProjectConnection connection =
           GradleConnector.newConnector().forProjectDirectory(project).connect();
@@ -60,27 +73,33 @@ public class BuildJob implements Runnable {
       build.run(
           new ResultHandler<Void>() {
             public void onComplete(Void result) {
-              event.setStatusCode(Event.StatusCode.SUCCESSFUL);
-              event.setMessage("Build succeeded.");
+              try {
+                queue.insert(new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, "Build succeeded."));
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              }
             }
 
             public void onFailure(GradleConnectionException failure) {
-              event.setStatusCode(Event.StatusCode.FAIL);
+              String message;
               if (failure instanceof BuildException) {
-                event.setMessage("Couldn't build project at " + path);
+                message = "Couldn't build project at " + path;
               } else {
-                event.setMessage(
-                    "Build failed because of unexpected exception: " + failure.toString());
+                message = "Build failed because of unexpected exception: " + failure.toString();
+              }
+              try {
+                queue.insert(new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, message));
+              } catch (InterruptedException e) {
+                e.printStackTrace();
               }
             }
           });
     } catch (IllegalStateException e) {
-      event.setStatusCode(Event.StatusCode.FAIL);
-      event.setMessage("Connection was closed during build.");
-
-    } catch (Exception e) {
-      event.setStatusCode(Event.StatusCode.FAIL);
-      event.setMessage("Build failed with exception: " + e);
+      try {
+        queue.insert(new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, "Connection was closed during build."));
+      } catch (InterruptedException e1) {
+        e1.printStackTrace();
+      }
     } finally {
       con.close();
     }
