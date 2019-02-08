@@ -20,6 +20,6 @@ class logView(APIView):
 
         serializer = LogEntrySerializer(data=logItem)
         print(serializer)
-        if serializer.is_valid(raise_exception=True):
+        if serializer.is_valid():
             entry_saved = serializer.save()
         return Response({"success": "LogEntry '{}' created successfully".format(entry_saved).title})
