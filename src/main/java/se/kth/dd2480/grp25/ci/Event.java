@@ -48,12 +48,13 @@ public class Event {
     this(id, type, status, message, "", "", null);
   }
 
-  public Event(String id, Type type, Status status, String message, String repository, String branch) {
-      this(id, type, status, message, repository, branch, null);
+  public Event(
+      String id, Type type, Status status, String message, String repository, String branch) {
+    this(id, type, status, message, repository, branch, null);
   }
 
   public Event(String id, Type type, Status status, String message, Event event) {
-      this(id, type, status, message, "", "", event);
+    this(id, type, status, message, "", "", event);
   }
   /**
    * Create an event.
@@ -66,7 +67,13 @@ public class Event {
    * @param message the branch name of the commit.
    */
   public Event(
-      String id, Type type, Status status, String message, String repository, String branch, Event logEvent) {
+      String id,
+      Type type,
+      Status status,
+      String message,
+      String repository,
+      String branch,
+      Event logEvent) {
     this.id = id;
     this.type = type;
     this.code = status;
@@ -130,10 +137,8 @@ public class Event {
     return branch;
   }
 
-    /**
-     * Get the event that is supposed to be logged to database
-     */
-    public Event getLogEvent() {
-        return logEvent;
-    }
+  /** Get the event that is supposed to be logged to database */
+  public Event getLogEvent() {
+    return logEvent;
+  }
 }
