@@ -51,9 +51,7 @@ public class BuildJob implements Runnable {
    */
   @Override
   public void run() {
-
     File project = (new File(path));
-
     if (!project.exists()) {
       try {
         queue.insert(
@@ -66,20 +64,13 @@ public class BuildJob implements Runnable {
         e.printStackTrace();
       }
     } else {
-      ProjectConnection connection =
-          GradleConnector.newConnector().forProjectDirectory(project).connect();
-
-      launch(connection);
+      launch();
     }
   }
 
-  private void launch(ProjectConnection con) {
+  /** A help function to build a gradle project */
+  private void launch() {
     try {
-      File dir = new File(path);
-      if (!dir.exists()) {
-        queue.insert(
-            new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, "Dir doesn't exist"));
-      }
       try {
         String command = "gradle build";
         Process p = Runtime.getRuntime().exec(command, null, new File("."));
@@ -102,57 +93,4 @@ public class BuildJob implements Runnable {
       System.err.println(ie);
     }
   }
-
-  /** A help function to launch and execute a build on a connection. */
-  /*
-  private void launch(ProjectConnection con) {
-    try {
-      BuildLauncher build = con.newBuild();
-      build.forTasks("clean");
-      build.run(
-          new ResultHandler<Void>() {
-            public void onComplete(Void result) {
-              System.out.println(result);
-              try {
-                queue.insert(
-                    new Event(
-                        event.getId(),
-                        Event.Type.BUILD,
-                        Event.Status.SUCCESSFUL,
-                        "Build succeeded."));
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-              }
-            }
-
-            public void onFailure(GradleConnectionException failure) {
-              String message;
-              if (failure instanceof BuildException) {
-                message = "Couldn't build project at " + path;
-              } else {
-                message = "Build failed because of unexpected exception: " + failure.toString();
-              }
-              try {
-                queue.insert(
-                    new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, message));
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-              }
-            }
-          });
-    } catch (IllegalStateException e) {
-      try {
-        queue.insert(
-            new Event(
-                event.getId(),
-                Event.Type.BUILD,
-                Event.Status.FAIL,
-                "Connection was closed during build."));
-      } catch (InterruptedException e1) {
-        e1.printStackTrace();
-      }
-    } finally {
-      con.close();
-    }
-  }*/
 }
