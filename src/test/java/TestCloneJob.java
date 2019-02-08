@@ -29,4 +29,20 @@ public class TestCloneJob {
     String command = "rm -rf testDirectory";
     Runtime.getRuntime().exec(command, null, new File(".")).waitFor();
   }
+
+  /** If the repository doesn't exist the job should fail */
+  @Test
+  public void testCloneWrongRepo() throws IOException, InterruptedException {
+
+    EventQueue queue = new EventQueue();
+    Event event =
+        new Event("testDirectory", Event.Type.CLONE, Event.Status.SUCCESSFUL, null, "ww", "master");
+    CloneJob job = new CloneJob(event, queue);
+    job.run();
+
+    Event generatedEvent = queue.pop();
+    Assert.assertEquals(Event.Type.CLONE, generatedEvent.getType());
+    Assert.assertEquals(Event.Status.FAIL, generatedEvent.getStatus());
+    Assert.assertEquals("Could not clone repository", generatedEvent.getMessage());
+  }
 }
