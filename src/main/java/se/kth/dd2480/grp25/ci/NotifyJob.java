@@ -51,7 +51,7 @@ public class NotifyJob implements Runnable {
       }
       String buildSuccessful = "\"All tests passed!\"";
       String buildFail = "\"Build fail\"";
-      String testFail = "\"Some tests failed: " + event.getMessage() + "\"";
+      String testFail = "\"Tests failed\"";
       URL url =
           new URL(
               "https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/statuses/"
