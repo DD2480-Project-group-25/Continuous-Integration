@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.Scanner;
 import org.gradle.tooling.*;
 
-/** A job that builds a project given by an Event object of EventType 'BUILD'. */
+/** A job that builds a project given by an Event object of Type 'CLONE'. */
 public class BuildJob implements Runnable {
   public static class Examiner extends JobExaminer {
 
@@ -46,8 +46,8 @@ public class BuildJob implements Runnable {
   }
 
   /**
-   * Opens a connection to a project through given path and launches a build via help function
-   * 'launch()'
+   * Controls that the project repository exists and if it does, builds the project with the help of
+   * "gradle build". Logs compile errors.
    */
   @Override
   public void run() {
@@ -64,12 +64,12 @@ public class BuildJob implements Runnable {
         e.printStackTrace();
       }
     } else {
-      launch();
+      build();
     }
   }
 
   /** A help function to build a gradle project */
-  private void launch() {
+  private void build() {
     try {
       try {
         String command = "gradle build";
