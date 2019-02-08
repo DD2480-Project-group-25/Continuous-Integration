@@ -20,6 +20,10 @@ cd $SOME_DIRECTORY
 git clone git@github.com:DD2480-Project-group-25/Continuous-Integration.git
 ```
 
+### Database with logged history
+
+An HTTP post request is used to log history from the CI service runs. The API for posting is available at ```http://localhost/8080/api/```. The CI service will post to this API if you run ```python3 manage.py runserver 8080``` standing in ```./logDb```.
+
 ## Running the tests
 
 To be able to run the tests you need to get an personal access token from GitHub.
