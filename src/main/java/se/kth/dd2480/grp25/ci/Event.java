@@ -48,6 +48,10 @@ public class Event {
     this(id, type, status, message, "", "", null);
   }
 
+  public Event(String id, Type type, Status status, String message, String repository, String branch) {
+      this(id, type, status, message, repository, branch, null);
+  }
+
   public Event(String id, Type type, Status status, String message, Event event) {
       this(id, type, status, message, "", "", event);
   }
