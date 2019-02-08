@@ -65,7 +65,7 @@ public class NotifyDbJob implements Runnable {
         if (test) {
           url = new URL("https://postman-echo.com/post");
         } else {
-          url = new URL("https://localhost:8080/api");
+          url = new URL("http://localhost:8080/api/");
         }
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -97,8 +97,8 @@ public class NotifyDbJob implements Runnable {
               new Event(
                   event.getId(),
                   Event.Type.NOTIFYDB,
-                  Event.Status.FAIL,
-                  "Couldn't notify database, response code: " + conn.getResponseCode()));
+                  Event.Status.SUCCESSFUL,
+                  "Response code: " + conn.getResponseCode()));
         }
       } catch (Exception e) {
         System.err.println(e);
