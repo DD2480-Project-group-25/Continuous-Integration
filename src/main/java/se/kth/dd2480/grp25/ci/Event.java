@@ -16,6 +16,7 @@ public class Event {
     BUILD,
     TEST,
     NOTIFY,
+    NOTIFYDB,
     CLEANUP,
     PRINT,
     STARTUP
