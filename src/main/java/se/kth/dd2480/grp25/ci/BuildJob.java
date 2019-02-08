@@ -68,9 +68,7 @@ public class BuildJob implements Runnable {
     }
   }
 
-  /** A help function to build a gradle project
-   * Hello
-   * */
+  /** A help function to build a gradle project Hello */
   private void build() {
     try {
       try {
