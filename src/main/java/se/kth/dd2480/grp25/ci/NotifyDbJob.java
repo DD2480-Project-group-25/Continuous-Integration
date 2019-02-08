@@ -71,7 +71,7 @@ public class NotifyDbJob implements Runnable {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
         String id = event.getId();
-        String status = event.getStatus().name();
+        String status = event.getLogEvent().getStatus().name();
 
         String json =
             "{\"log entries\":{\"commit_id\":\""
