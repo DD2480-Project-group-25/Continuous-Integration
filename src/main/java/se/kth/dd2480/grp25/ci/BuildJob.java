@@ -86,7 +86,7 @@ public class BuildJob implements Runnable {
 
         Scanner s = new Scanner(p.getErrorStream()).useDelimiter("\\A");
         String result = s.hasNext() ? s.next() : "";
-        if (result.contains("FAILED")) {
+        if (result.contains("FAILED") && result.contains("compile")) {
           throw new IOException();
         }
         queue.insert(
