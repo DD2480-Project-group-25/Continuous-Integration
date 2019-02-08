@@ -13,10 +13,21 @@ public class CleanupJob implements Runnable {
    */
   public static class Examiner extends JobExaminer {
 
+    /**
+     * Create a Examiner.
+     *
+     * @param queue the event queue that jobs that this Examiner creates should insert events in.
+     */
     public Examiner(EventQueue queue) {
       super(queue);
     }
 
+    /**
+     * Determines if an event should be accepted and a job created.
+     *
+     * @param event the offered event.
+     * @return an optional of an CleanupJob if event is accepted, otherwise empty optional.
+     */
     @Override
     public Optional<Runnable> offer(Event event) {
       boolean interesting =
@@ -32,6 +43,12 @@ public class CleanupJob implements Runnable {
   private Event event;
   private EventQueue queue;
 
+  /**
+   * Create a {@linkplain CleanupJob} instance.
+   *
+   * @param event the event that this job should process.
+   * @param queue the queue that this job may append new events to.
+   */
   public CleanupJob(Event event, EventQueue queue) {
     this.event = event;
     this.queue = queue;

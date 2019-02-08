@@ -40,6 +40,12 @@ public class CloneJob implements Runnable {
   private String branch;
   private String directory;
 
+  /**
+   * Create instance of {@linkplain CloneJob}.
+   *
+   * @param event the event that this job should process.
+   * @param queue the queue that this job may append new events to.
+   */
   public CloneJob(Event event, EventQueue queue) {
     this.event = event;
     this.queue = queue;
