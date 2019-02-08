@@ -211,7 +211,7 @@ public class TestParseJson {
   public void testParseCommitID() {
     String[] arg = new String[] {"after"};
     String res = CiServer.parseJsonString(json, arg);
-    Assert.assertEquals("9fc4d28b68c20a2e5c064d91b955d9c529b86a1", res);
+    Assert.assertEquals("9fc4d28b68c20a2e5c064d91b955d9c529b86a", res);
   }
 
   @Test
