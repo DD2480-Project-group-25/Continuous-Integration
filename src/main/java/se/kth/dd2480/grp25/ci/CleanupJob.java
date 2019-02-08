@@ -33,6 +33,7 @@ public class CleanupJob implements Runnable {
       boolean interesting =
           (event.getType() == Event.Type.TEST && event.getStatus() == Event.Status.SUCCESSFUL)
               || (event.getType() != Event.Type.NOTIFY
+                  && event.getType() != Event.Type.NOTIFYDB
                   && event.getType() != Event.Type.CLEANUP
                   && event.getStatus() == Event.Status.FAIL);
 
