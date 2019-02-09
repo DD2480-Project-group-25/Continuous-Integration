@@ -68,13 +68,13 @@ public class TestNotifyJob {
   @Test
   public void testNotifyJobFailed() {
     EventQueue queue = new EventQueue();
-    Event event = new Event("wrong_commit", Event.Type.TEST, Event.Status.SUCCESSFUL, "");
+    Event event = new Event("wrongCommit1", Event.Type.TEST, Event.Status.SUCCESSFUL, "");
     NotifyJob job = new NotifyJob(event, queue);
     job.run();
     try {
       Event notifyEvent = queue.pop();
       Assert.assertEquals(Event.Status.FAIL, notifyEvent.getStatus());
-      Assert.assertEquals("Failed to notify", notifyEvent.getMessage());
+      Assert.assertEquals("Unprocessable entity", notifyEvent.getMessage());
     } catch (InterruptedException e) {
       System.out.println(e);
       Assert.fail();

@@ -1,10 +1,12 @@
 package se.kth.dd2480.grp25.ci;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
+import java.util.Scanner;
 import org.gradle.tooling.*;
 
-/** A job that builds a project given by an Event object of EventType 'BUILD'. */
+/** A job that builds a project given by an Event object of Type 'CLONE'. */
 public class BuildJob implements Runnable {
   public static class Examiner extends JobExaminer {
 
@@ -44,14 +46,12 @@ public class BuildJob implements Runnable {
   }
 
   /**
-   * Opens a connection to a project through given path and launches a build via help function
-   * 'launch()'
+   * Controls that the project repository exists and if it does, builds the project with the help of
+   * "gradle build". Logs compile errors.
    */
   @Override
   public void run() {
-
     File project = (new File(path));
-
     if (!project.exists()) {
       try {
         queue.insert(
@@ -64,60 +64,33 @@ public class BuildJob implements Runnable {
         e.printStackTrace();
       }
     } else {
-      ProjectConnection connection =
-          GradleConnector.newConnector().forProjectDirectory(project).connect();
-
-      launch(connection);
+      build();
     }
   }
 
-  /** A help function to launch and execute a build on a connection. */
-  private void launch(ProjectConnection con) {
+  /** A help function to build a gradle project */
+  private void build() {
     try {
-      BuildLauncher build = con.newBuild();
-      build.run(
-          new ResultHandler<Void>() {
-            public void onComplete(Void result) {
-              try {
-                queue.insert(
-                    new Event(
-                        event.getId(),
-                        Event.Type.BUILD,
-                        Event.Status.SUCCESSFUL,
-                        "Build succeeded."));
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-              }
-            }
-
-            public void onFailure(GradleConnectionException failure) {
-              String message;
-              if (failure instanceof BuildException) {
-                message = "Couldn't build project at " + path;
-              } else {
-                message = "Build failed because of unexpected exception: " + failure.toString();
-              }
-              try {
-                queue.insert(
-                    new Event(event.getId(), Event.Type.BUILD, Event.Status.FAIL, message));
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-              }
-            }
-          });
-    } catch (IllegalStateException e) {
       try {
+        String command = "gradle build";
+        Process p = Runtime.getRuntime().exec(command, null, new File("."));
+
+        Scanner s = new Scanner(p.getErrorStream()).useDelimiter("\\A");
+        String result = s.hasNext() ? s.next() : "";
+        if (result.contains("FAILED") && result.contains("compile")) {
+          throw new IOException();
+        }
         queue.insert(
             new Event(
-                event.getId(),
-                Event.Type.BUILD,
-                Event.Status.FAIL,
-                "Connection was closed during build."));
-      } catch (InterruptedException e1) {
-        e1.printStackTrace();
+                event.getId(), Event.Type.BUILD, Event.Status.SUCCESSFUL, "Build succeeded."));
+      } catch (Exception e) {
+        System.err.println(e);
+        queue.insert(
+            new Event(
+                event.getId(), Event.Type.BUILD, Event.Status.FAIL, "Could not build project"));
       }
-    } finally {
-      con.close();
+    } catch (InterruptedException ie) {
+      System.err.println(ie);
     }
   }
 }

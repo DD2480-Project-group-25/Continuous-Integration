@@ -16,6 +16,7 @@ public class Event {
     BUILD,
     TEST,
     NOTIFY,
+    NOTIFYDB,
     CLEANUP,
     PRINT,
     STARTUP
@@ -32,6 +33,7 @@ public class Event {
   private final Status code;
   private final String message;
   private final String repository;
+  private final String branch;
 
   /**
    * Constructor overloading for create event
@@ -42,7 +44,7 @@ public class Event {
    * @param message an message from the job that generated this event.
    */
   public Event(String id, Type type, Status status, String message) {
-    this(id, type, status, message, "");
+    this(id, type, status, message, "", "");
   }
 
   /**
@@ -52,13 +54,17 @@ public class Event {
    * @param type the type of job that completed and generated this event.
    * @param status indicates if the job that generated this event was successful or not.
    * @param message an message from the job that generated this event.
+   * @param repository the name of the repository at github.
+   * @param message the branch name of the commit.
    */
-  public Event(String id, Type type, Status status, String message, String repository) {
+  public Event(
+      String id, Type type, Status status, String message, String repository, String branch) {
     this.id = id;
     this.type = type;
     this.code = status;
     this.message = message;
     this.repository = repository;
+    this.branch = branch;
   }
 
   /**
@@ -104,5 +110,14 @@ public class Event {
    */
   public String getRepository() {
     return repository;
+  }
+
+  /**
+   * Get the name of the branch for the current job
+   *
+   * @return the name of the branch for the latest commit
+   */
+  public String getBranch() {
+    return branch;
   }
 }

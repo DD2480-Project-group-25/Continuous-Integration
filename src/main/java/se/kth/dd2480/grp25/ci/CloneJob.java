@@ -19,7 +19,7 @@ public class CloneJob implements Runnable {
     }
 
     /**
-     * This function decides if it wants to accept an event and offer a {@link PrintJob}.
+     * This function decides if it wants to accept an event and offer a {@link CloneJob}.
      *
      * <p>This function confirms to the {@link JobExaminer} interface.
      *
@@ -40,11 +40,17 @@ public class CloneJob implements Runnable {
   private String branch;
   private String directory;
 
+  /**
+   * Create instance of {@linkplain CloneJob}.
+   *
+   * @param event the event that this job should process.
+   * @param queue the queue that this job may append new events to.
+   */
   public CloneJob(Event event, EventQueue queue) {
     this.event = event;
     this.queue = queue;
     // set default branch to master and default directory to current directory
-    this.branch = "master";
+    this.branch = event.getBranch();
     this.directory = ".";
   }
 

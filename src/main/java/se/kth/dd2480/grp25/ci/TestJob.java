@@ -17,10 +17,21 @@ public class TestJob implements Runnable {
    */
   public static class Examiner extends JobExaminer {
 
+    /**
+     * Create a JobExaminer.
+     *
+     * @param queue the event queue that jobs that this Examiner creates should insert events in.
+     */
     public Examiner(EventQueue queue) {
       super(queue);
     }
 
+    /**
+     * Accepts successful build events and discards all other.
+     *
+     * @param event the offered event.
+     * @return an optional with a {@link TestJob} instance if accepted.
+     */
     @Override
     public Optional<Runnable> offer(Event event) {
       return event.getType() == Event.Type.BUILD && event.getStatus() == Event.Status.SUCCESSFUL
@@ -32,6 +43,12 @@ public class TestJob implements Runnable {
   private Event event;
   private EventQueue queue;
 
+  /**
+   * Create a {@linkplain TestJob} instance.
+   *
+   * @param event the event that this job should process.
+   * @param queue the queue that this job may append new events to.
+   */
   public TestJob(Event event, EventQueue queue) {
     this.event = event;
     this.queue = queue;

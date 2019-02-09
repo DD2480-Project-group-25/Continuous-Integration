@@ -20,9 +20,7 @@ public class NotifyJob implements Runnable {
 
     @Override
     public Optional<Runnable> offer(Event event) {
-      if (event.getType() == Event.Type.TEST
-          || event.getType() == Event.Type.BUILD
-          || event.getType() == Event.Type.WEB_HOOK) {
+      if (event.getType() == Event.Type.TEST || event.getType() == Event.Type.BUILD) {
         return Optional.of(new NotifyJob(event, super.queue));
       } else {
         return Optional.empty();
@@ -30,6 +28,12 @@ public class NotifyJob implements Runnable {
     }
   }
 
+  /**
+   * Create an instance of {@linkplain NotifyJob}.
+   *
+   * @param event the event that this job should process.
+   * @param queue the queue that this job may append new events to.
+   */
   public NotifyJob(Event event, EventQueue queue) {
     this.event = event;
     this.queue = queue;
@@ -47,7 +51,7 @@ public class NotifyJob implements Runnable {
       }
       String buildSuccessful = "\"All tests passed!\"";
       String buildFail = "\"Build fail\"";
-      String testFail = "\"Some tests failed: " + event.getMessage() + "\"";
+      String testFail = "\"Tests failed\"";
       URL url =
           new URL(
               "https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/statuses/"
@@ -95,11 +99,13 @@ public class NotifyJob implements Runnable {
           }
         }
         os.write(params.getBytes(StandardCharsets.UTF_8));
-        if (conn.getResponseCode() != HttpURLConnection.HTTP_CREATED) {
-          notifyEvent =
-              new Event(event.getId(), Event.Type.NOTIFY, Event.Status.FAIL, "Failed to notify");
+        if (conn.getResponseCode() == 422) {
+          queue.insert(
+              new Event(
+                  event.getId(), Event.Type.NOTIFY, Event.Status.FAIL, "Unprocessable entity"));
+        } else {
+          queue.insert(notifyEvent);
         }
-        queue.insert(notifyEvent);
         os.flush();
       }
     } catch (Exception e) {

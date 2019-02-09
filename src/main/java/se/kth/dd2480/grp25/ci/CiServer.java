@@ -17,10 +17,16 @@ import java.net.InetSocketAddress;
  */
 public class CiServer {
   private HttpServer server;
-  private final int port = 8000;
   private final EventQueue eventQueue;
 
-  public CiServer(EventQueue queue) throws IOException {
+  /**
+   * Create a {@linkplain CiServer} instance.
+   *
+   * @param queue the queue were events should be published.
+   * @param port the port were the server should listen.
+   * @throws IOException may be thrown if the server can't be created.
+   */
+  public CiServer(EventQueue queue, int port) throws IOException {
     eventQueue = queue;
     server = HttpServer.create(new InetSocketAddress(port), 0);
     server.createContext("/").setHandler(CiServer::handleHttpRequest);
@@ -29,6 +35,14 @@ public class CiServer {
     System.out.println("Server running...");
   }
 
+  /**
+   * Hello world endpoint.
+   *
+   * <p>Used to confirm that server is online.
+   *
+   * @param exchange the exchange used for this request.
+   * @throws IOException may be thrown.
+   */
   private static void handleHttpRequest(HttpExchange exchange) throws IOException {
     String response = "Hello World!";
     exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.getBytes().length);
@@ -37,6 +51,11 @@ public class CiServer {
     os.close();
   }
 
+  /**
+   * GitHub webhook endpoint.
+   *
+   * @param exchange the exchange used for this request.
+   */
   private void handleWebhook(HttpExchange exchange) {
     String req_body = "";
     try {
@@ -75,8 +94,6 @@ public class CiServer {
     // "Sanitize" branch name
     branchName = branchName.replace("refs/heads/", "");
 
-    System.out.println(branchName);
-
     if (commitID.equals("") || repoName.equals("") || branchName.equals("")) {
       // Should perhaps be logged
       System.err.println("Invalid JSON file provided");
@@ -84,7 +101,7 @@ public class CiServer {
     }
 
     Event webhookEvent =
-        new Event(commitID, Event.Type.WEB_HOOK, Event.Status.SUCCESSFUL, "", repoName);
+        new Event(commitID, Event.Type.WEB_HOOK, Event.Status.SUCCESSFUL, "", repoName, branchName);
     try {
       eventQueue.insert(webhookEvent);
     } catch (InterruptedException e) {
@@ -92,6 +109,15 @@ public class CiServer {
     }
   }
 
+  /**
+   * Parses GitHub webhook json object.
+   *
+   * <p>For internal use.
+   *
+   * @param json the json to be parsed-
+   * @param arg the elements to be picked out.
+   * @return the parsed data.
+   */
   public static String parseJsonString(String json, String[] arg) {
     String res = "";
     try {
