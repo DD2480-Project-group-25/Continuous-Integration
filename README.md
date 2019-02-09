@@ -71,4 +71,15 @@ This is due to project setup and auto-generated content, rather than unbalanced 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Implementation
-TO BE FILLED OUT.
+To perform cloning, compilation, testing and notifyications we use a mix of executing system commands, the Gradle tooling and HTTP requests.
+
+Our architecture was designed so that each step of the process could, to some degree, be developed independently. Therefore has areas that seem related (i.e. compilation and testing) used different technologies to perform their task.
+
+Cloning and compilation uses Java's Runtime libarary to execute and monitor system commands. Testing instead relies on the Gradle tooling that allows it to directly incorporate Gradle into our program to run and monitor results of tests. Notifications, by nature, need to communicate with other systems using HTTP. The Java Standard Libaray has a HTTP clients that we use.
+
+Unit testing theses components is a challenge due to that they natuarlly interacts with other system such as the OS, file system or entierly other hosts. Our strategy to test these component boiled down to
+1. try to set up the system we would interact with to some state,
+2. run our code,
+3. see if the outcome matched our expectations for the state we set up.
+
+In this manner we did some negative tests, such as the one in [`TestTestJob.java`](./src/test/java/TestTestJob.java). We could have done more though. If we look at [`TestTestJob.java`](./src/test/java/TestTestJob.java) again. Here we did not do positive tests, which we could have done by setting up a mock projects.
