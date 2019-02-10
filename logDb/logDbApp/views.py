@@ -15,13 +15,9 @@ def logs(request):
     return render(request, 'logDbApp/log.html', {'log': logTable})
 
 
-class entryDetailView():
+def entryDetailView(request, b):
 
-    def __init__(self, request):
-        self.url = LogEntry.commit_id
-
-    def get(self):
-        return render(self.request, 'logDbApp/entryDetail.html', {'Details': LogEntry.objects.all()})
+    return render(request, 'logDbApp/entryDetail.html', {'Details': LogEntry.objects.all()})
 
 
 class logView(APIView):
@@ -32,7 +28,7 @@ class logView(APIView):
         serializer = LogEntrySerializer(logItems, many=True)
         return Response({"log entries": serializer.data})
 
-    def post(selfself, request):
+    def post(self, request):
         logItem = request.data.get('log entries')
 
         serializer = LogEntrySerializer(data=logItem)

@@ -9,3 +9,4 @@ class LogEntry(models.Model):
     status = models.CharField(max_length=100, verbose_name='Status')
     message = models.CharField(max_length=200, verbose_name='Message')
 
+

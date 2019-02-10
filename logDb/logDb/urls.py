@@ -17,10 +17,12 @@ from django.conf.urls import url
 from django.contrib import admin
 
 from logDbApp.views import logs
+from logDbApp.views import entryDetailView
 from logDbApp.views import logView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^log/', logs),
-    url('api/', logView.as_view())
+    url('api/', logView.as_view()),
+    url('logs/(\d+)/', entryDetailView, name='detail')
 ]
