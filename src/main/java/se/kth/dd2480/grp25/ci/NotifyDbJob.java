@@ -79,11 +79,12 @@ public class NotifyDbJob implements Runnable {
    * @param status is the status of the job
    * @return a json object to notify the logDB
    */
-  public static JsonElement serialize(String id, String timestamp, String status) {
+  public static JsonElement serialize(String id, String timestamp, String status, String message) {
     JsonObject body = new JsonObject();
     body.add("commit_id", new JsonPrimitive(id));
     body.add("start", new JsonPrimitive(timestamp));
     body.add("status", new JsonPrimitive(status));
+    body.add("message", new JsonPrimitive(message));
 
     JsonObject res = new JsonObject();
     res.add("log entries", body);
@@ -101,16 +102,22 @@ public class NotifyDbJob implements Runnable {
         if (test) {
           url = new URL("https://postman-echo.com/post");
         } else {
-          url = new URL("http://localhost:8080/api/");
+          url = new URL("http://157.230.31.10:8080/api/");
         }
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
         String id = event.getId();
-
         String timestamp = getTime();
-        String status = event.getStatus().name();
-        JsonElement json = serialize(id, timestamp, status);
+        String status = event.getLogEvent().getStatus().name();
+        String message = event.getLogEvent().getMessage();
+
+        if (message.length() > 200) {
+          message = message.substring(0, 168);
+          message += ". Cannot show more information.";
+        }
+
+        JsonElement json = serialize(id, timestamp, status, message);
 
         conn.setRequestProperty("Content-type", "application/json");
         conn.setDoOutput(true);
