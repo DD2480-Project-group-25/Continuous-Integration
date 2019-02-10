@@ -11,10 +11,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 
-/**
- * A simple HttpServer that at the moment respond with "Hello World!" to localhost on port 8000, no
- * matter what path is entered after http://localhost:8000/
- */
+/** A HttpServer for Continuous Integration that handles POST requests triggered by Github. */
 public class CiServer {
   private HttpServer server;
   private final EventQueue eventQueue;
@@ -36,9 +33,7 @@ public class CiServer {
   }
 
   /**
-   * Hello world endpoint.
-   *
-   * <p>Used to confirm that server is online.
+   * This method is used to confirm that server is online.
    *
    * @param exchange the exchange used for this request.
    * @throws IOException may be thrown.
@@ -144,6 +139,10 @@ public class CiServer {
     return res;
   }
 
+  /**
+   * This method stops the server by closing the listening socket and disallowing any new exchanges
+   * from being processed.
+   */
   public void stop() {
     server.stop(0);
   }

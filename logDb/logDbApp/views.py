@@ -1,4 +1,3 @@
-
 from django.shortcuts import render
 from django_tables2 import RequestConfig
 
@@ -35,4 +34,4 @@ class logView(APIView):
         serializer = LogEntrySerializer(data=logItem)
         if serializer.is_valid():
             entry_saved = serializer.save()
-        return Response({"success": "LogEntry '{}' created successfully".format(entry_saved).title})
+        return HttpResponse({"success": "LogEntry '{}' created successfully".format(entry_saved).title})

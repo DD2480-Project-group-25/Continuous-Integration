@@ -1,9 +1,14 @@
 package se.kth.dd2480.grp25.ci;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 /** A job that creates entries in the database for successful and failed notifyEvents */
@@ -55,6 +60,37 @@ public class NotifyDbJob implements Runnable {
   }
 
   /**
+   * Get current date and time as a text string.
+   *
+   * @return string with current time on format yyyy.mm.dd.hh.mm.ss
+   */
+  public static String getTime() {
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+
+    return sdf.format(timestamp);
+  }
+
+  /**
+   * Method for serializing JSON objects to notify the logDB
+   *
+   * @param id is the commit id
+   * @param timestamp when the notify job was triggered
+   * @param status is the status of the job
+   * @return a json object to notify the logDB
+   */
+  public static JsonElement serialize(String id, String timestamp, String status) {
+    JsonObject body = new JsonObject();
+    body.add("commit_id", new JsonPrimitive(id));
+    body.add("start", new JsonPrimitive(timestamp));
+    body.add("status", new JsonPrimitive(status));
+
+    JsonObject res = new JsonObject();
+    res.add("log entries", body);
+    return res;
+  }
+
+  /**
    * Opens a HttpURLConnection towards url and writes a post to the api form, to create a database
    * entry.
    */
@@ -71,19 +107,15 @@ public class NotifyDbJob implements Runnable {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
         String id = event.getId();
-        String status = event.getStatus().name();
 
-        String json =
-            "{\"log entries\":{\"commit_id\":\""
-                + id
-                + "\",\"start\":\"00:00:00\",\"status\":\""
-                + status
-                + "\"}}";
+        String timestamp = getTime();
+        String status = event.getStatus().name();
+        JsonElement json = serialize(id, timestamp, status);
 
         conn.setRequestProperty("Content-type", "application/json");
         conn.setDoOutput(true);
         try (OutputStream os = conn.getOutputStream()) {
-          os.write(json.getBytes(StandardCharsets.UTF_8));
+          os.write(json.getAsJsonObject().toString().getBytes(StandardCharsets.UTF_8));
         }
         if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
           queue.insert(
@@ -97,7 +129,7 @@ public class NotifyDbJob implements Runnable {
               new Event(
                   event.getId(),
                   Event.Type.NOTIFYDB,
-                  Event.Status.SUCCESSFUL,
+                  Event.Status.FAIL,
                   "Response code: " + conn.getResponseCode()));
         }
       } catch (Exception e) {
