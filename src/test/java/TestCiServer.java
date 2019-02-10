@@ -1,5 +1,10 @@
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import org.junit.Assert;
@@ -9,7 +14,9 @@ import se.kth.dd2480.grp25.ci.EventQueue;
 
 public class TestCiServer {
 
-  /** Test that the server responds when connecting to localhost on port 8000 */
+  /**
+   * Test that the server responds when connecting to localhost on a random port between 10000-60000
+   */
   @Test(expected = Test.None.class)
   public void testResponseOK() {
 
@@ -32,6 +39,7 @@ public class TestCiServer {
     }
   }
 
+  /** Test the response for the POST request */
   @Test
   public void testPositiveHook() {
     Random rand = new Random();

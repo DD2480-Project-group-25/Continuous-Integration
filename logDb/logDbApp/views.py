@@ -1,5 +1,6 @@
 
 from django.shortcuts import render
+from django.http import HttpResponse
 from .models import LogEntry
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -22,4 +23,4 @@ class logView(APIView):
         print(serializer)
         if serializer.is_valid():
             entry_saved = serializer.save()
-        return Response({"success": "LogEntry '{}' created successfully".format(entry_saved).title})
+        return HttpResponse({"success": "LogEntry '{}' created successfully".format(entry_saved).title})
