@@ -1,5 +1,8 @@
 package se.kth.dd2480.grp25.ci;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -69,6 +72,25 @@ public class NotifyDbJob implements Runnable {
   }
 
   /**
+   * Method for serializing JSON objects to notify the logDB
+   *
+   * @param id is the commit id
+   * @param timestamp when the notify job was triggered
+   * @param status is the status of the job
+   * @return a json object to notify the logDB
+   */
+  public static JsonElement serialize(String id, String timestamp, String status) {
+    JsonObject body = new JsonObject();
+    body.add("commit_id", new JsonPrimitive(id));
+    body.add("start", new JsonPrimitive(timestamp));
+    body.add("status", new JsonPrimitive(status));
+
+    JsonObject res = new JsonObject();
+    res.add("log entries", body);
+    return res;
+  }
+
+  /**
    * Opens a HttpURLConnection towards url and writes a post to the api form, to create a database
    * entry.
    */
@@ -87,20 +109,12 @@ public class NotifyDbJob implements Runnable {
         String id = event.getId();
         String timestamp = getTime();
         String status = event.getStatus().name();
-
-        String json =
-            "{\"log entries\":{\"commit_id\":\""
-                + id
-                + "\",\"start\":\""
-                + timestamp
-                + "\",\"status\":\""
-                + status
-                + "\"}}";
+        JsonElement json = serialize(id, timestamp, status);
 
         conn.setRequestProperty("Content-type", "application/json");
         conn.setDoOutput(true);
         try (OutputStream os = conn.getOutputStream()) {
-          os.write(json.getBytes(StandardCharsets.UTF_8));
+          os.write(json.getAsJsonObject().toString().getBytes(StandardCharsets.UTF_8));
         }
         if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
           queue.insert(
@@ -114,7 +128,7 @@ public class NotifyDbJob implements Runnable {
               new Event(
                   event.getId(),
                   Event.Type.NOTIFYDB,
-                  Event.Status.SUCCESSFUL,
+                  Event.Status.FAIL,
                   "Response code: " + conn.getResponseCode()));
         }
       } catch (Exception e) {
