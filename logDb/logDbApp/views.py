@@ -17,7 +17,9 @@ def logs(request):
 
 def entryDetailView(request, b):
 
-    return render(request, 'logDbApp/entryDetail.html', {'Details': LogEntry.objects.all()})
+    commit = request.path.split("/")[2]
+    return render(request, 'logDbApp/entryDetail.html',
+                  {'Details': LogEntry.objects.filter(commit_id=commit)})
 
 
 class logView(APIView):
