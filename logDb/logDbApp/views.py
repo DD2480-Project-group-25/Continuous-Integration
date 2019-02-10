@@ -16,14 +16,13 @@ def logs(request):
 
 
 def entryDetailView(request, b):
-
     commit = request.path.split("/")[2]
+    logTable = LogEntryTable(LogEntry.objects.filter(commit_id=commit))
     return render(request, 'logDbApp/entryDetail.html',
-                  {'Details': LogEntry.objects.filter(commit_id=commit)})
+                  {'Details': logTable})
 
 
 class logView(APIView):
-
 
     def get(self, request):
         logItems = LogEntry.objects.all()
