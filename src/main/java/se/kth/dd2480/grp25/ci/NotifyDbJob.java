@@ -4,6 +4,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 /** A job that creates entries in the database for successful and failed notifyEvents */
@@ -55,6 +57,18 @@ public class NotifyDbJob implements Runnable {
   }
 
   /**
+   * Get current date and time as a text string.
+   *
+   * @return string with current time on format yyyy.mm.dd.hh.mm.ss
+   */
+  public static String getTime() {
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+
+    return sdf.format(timestamp);
+  }
+
+  /**
    * Opens a HttpURLConnection towards url and writes a post to the api form, to create a database
    * entry.
    */
@@ -71,12 +85,15 @@ public class NotifyDbJob implements Runnable {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
         String id = event.getId();
+        String timestamp = getTime();
         String status = event.getStatus().name();
 
         String json =
             "{\"log entries\":{\"commit_id\":\""
                 + id
-                + "\",\"start\":\"00:00:00\",\"status\":\""
+                + "\",\"start\":\""
+                + timestamp
+                + "\",\"status\":\""
                 + status
                 + "\"}}";
 
