@@ -1,3 +1,5 @@
+from django.core.exceptions import SuspiciousOperation
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from django_tables2 import RequestConfig
 
@@ -17,6 +19,7 @@ def logs(request):
 def entryDetailView(request, b):
     commit = request.path.split("/")[2]
     logTable = LogEntryTable(LogEntry.objects.filter(commit_id=commit))
+    logTable.exclude= ('detail',)
     return render(request, 'logDbApp/entryDetail.html',
                   {'Details': logTable})
 
@@ -32,6 +35,11 @@ class logView(APIView):
         logItem = request.data.get('log entries')
 
         serializer = LogEntrySerializer(data=logItem)
-        if serializer.is_valid():
-            entry_saved = serializer.save()
-        return HttpResponse({"success": "LogEntry '{}' created successfully".format(entry_saved).title})
+        try:
+            if serializer.is_valid():
+                entry_saved = serializer.save()
+            return HttpResponse({"success": "LogEntry '{}' created successfully".format(entry_saved).title})
+
+        except UnboundLocalError:
+           return HttpResponseBadRequest('Code:400 Bad Request. Invalid param length. '
+                                     'Does your message exceed 200 characters?')
