@@ -73,7 +73,8 @@ public class NotifyJob implements Runnable {
                     event.getId(),
                     Event.Type.NOTIFY,
                     Event.Status.SUCCESSFUL,
-                    "Notified that build failed.");
+                    "Notified that build failed.",
+                    event);
           } else {
             // We don't want to notify the user about a successful build
             return;
@@ -87,7 +88,8 @@ public class NotifyJob implements Runnable {
                     event.getId(),
                     Event.Type.NOTIFY,
                     Event.Status.SUCCESSFUL,
-                    "Notified that build was successful.");
+                    "Notified that build was successful.",
+                    event);
           } else {
             params = createParams(testFail, "failure");
             notifyEvent =
@@ -95,14 +97,19 @@ public class NotifyJob implements Runnable {
                     event.getId(),
                     Event.Type.NOTIFY,
                     Event.Status.SUCCESSFUL,
-                    "Notified that tests failed.");
+                    "Notified that tests failed.",
+                    event);
           }
         }
         os.write(params.getBytes(StandardCharsets.UTF_8));
         if (conn.getResponseCode() == 422) {
           queue.insert(
               new Event(
-                  event.getId(), Event.Type.NOTIFY, Event.Status.FAIL, "Unprocessable entity"));
+                  event.getId(),
+                  Event.Type.NOTIFY,
+                  Event.Status.FAIL,
+                  "Unprocessable entity",
+                  event));
         } else {
           queue.insert(notifyEvent);
         }

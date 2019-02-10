@@ -11,9 +11,15 @@ public class TestNotifyDbJob {
   public void testNotifyDbJobSuccessful() {
     try {
       EventQueue queue = new EventQueue();
+      Event buildEvent =
+          new Event("TestNotifyDb", Event.Type.BUILD, Event.Status.FAIL, "Could not build project");
       Event event =
           new Event(
-              "TestNotifyDbJob", Event.Type.NOTIFY, Event.Status.SUCCESSFUL, "All tests passed");
+              "TestNotifyDbJob",
+              Event.Type.NOTIFY,
+              Event.Status.SUCCESSFUL,
+              "All tests passed",
+              buildEvent);
       NotifyDbJob notifyDbJob = new NotifyDbJob(event, queue, true);
       notifyDbJob.run();
       Event generatedEvent = queue.pop();
@@ -29,12 +35,16 @@ public class TestNotifyDbJob {
   public void testNotifyDbJobNotifyFail() {
     try {
       EventQueue queue = new EventQueue();
+      Event testEvent =
+          new Event(
+              "TestNotifyDb", Event.Type.TEST, Event.Status.FAIL, "Failed on test TestJsonParser");
       Event event =
           new Event(
               "TestNotifyDbJob2",
               Event.Type.NOTIFY,
-              Event.Status.FAIL,
-              "Notified that tests failed.");
+              Event.Status.SUCCESSFUL,
+              "Notified that tests failed.",
+              testEvent);
       NotifyDbJob notifyDbJob = new NotifyDbJob(event, queue, true);
       notifyDbJob.run();
       Event generatedEvent = queue.pop();

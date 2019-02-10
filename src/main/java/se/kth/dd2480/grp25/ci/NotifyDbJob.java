@@ -107,6 +107,7 @@ public class NotifyDbJob implements Runnable {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
         String id = event.getId();
+
         String timestamp = getTime();
         String status = event.getStatus().name();
         JsonElement json = serialize(id, timestamp, status);

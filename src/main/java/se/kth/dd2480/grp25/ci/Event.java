@@ -34,6 +34,7 @@ public class Event {
   private final String message;
   private final String repository;
   private final String branch;
+  private final Event logEvent;
 
   /**
    * Constructor overloading for create event
@@ -44,9 +45,17 @@ public class Event {
    * @param message an message from the job that generated this event.
    */
   public Event(String id, Type type, Status status, String message) {
-    this(id, type, status, message, "", "");
+    this(id, type, status, message, "", "", null);
   }
 
+  public Event(
+      String id, Type type, Status status, String message, String repository, String branch) {
+    this(id, type, status, message, repository, branch, null);
+  }
+
+  public Event(String id, Type type, Status status, String message, Event event) {
+    this(id, type, status, message, "", "", event);
+  }
   /**
    * Create an event.
    *
@@ -58,13 +67,20 @@ public class Event {
    * @param message the branch name of the commit.
    */
   public Event(
-      String id, Type type, Status status, String message, String repository, String branch) {
+      String id,
+      Type type,
+      Status status,
+      String message,
+      String repository,
+      String branch,
+      Event logEvent) {
     this.id = id;
     this.type = type;
     this.code = status;
     this.message = message;
     this.repository = repository;
     this.branch = branch;
+    this.logEvent = logEvent;
   }
 
   /**
@@ -119,5 +135,10 @@ public class Event {
    */
   public String getBranch() {
     return branch;
+  }
+
+  /** Get the event that is supposed to be logged to database */
+  public Event getLogEvent() {
+    return logEvent;
   }
 }
