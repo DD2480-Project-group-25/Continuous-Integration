@@ -11,9 +11,10 @@ from .tables import LogEntryTable
 def logs(request):
     logTable = LogEntryTable(LogEntry.objects.all())
     RequestConfig(request).configure(logTable)
+    logTable.exclude= ('message',)
     return render(request, 'logDbApp/log.html', {'log': logTable})
 
-"""
+
 class entryDetailView():
 
     def __init__(self, request):
@@ -22,10 +23,10 @@ class entryDetailView():
     def get(self):
         return render(self.request, 'logDbApp/entryDetail.html', {'Details': LogEntry.objects.all()})
 
-"""
+
 class logView(APIView):
 
-    """
+
     def get(self, request):
         logItems = LogEntry.objects.all()
         serializer = LogEntrySerializer(logItems, many=True)
@@ -38,4 +39,3 @@ class logView(APIView):
         if serializer.is_valid():
             entry_saved = serializer.save()
         return Response({"success": "LogEntry '{}' created successfully".format(entry_saved).title})
-"""
