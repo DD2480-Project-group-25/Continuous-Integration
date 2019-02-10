@@ -3,7 +3,6 @@ package se.kth.dd2480.grp25.ci;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -74,6 +73,7 @@ public class NotifyDbJob implements Runnable {
 
   /**
    * Method for serializing JSON objects to notify the logDB
+   *
    * @param id is the commit id
    * @param timestamp when the notify job was triggered
    * @param status is the status of the job
@@ -81,9 +81,9 @@ public class NotifyDbJob implements Runnable {
    */
   public static JsonElement serialize(String id, String timestamp, String status) {
     JsonObject body = new JsonObject();
-    body.add("commit_id",new JsonPrimitive(id));
-    body.add("start",new JsonPrimitive(timestamp));
-    body.add("status",new JsonPrimitive(status));
+    body.add("commit_id", new JsonPrimitive(id));
+    body.add("start", new JsonPrimitive(timestamp));
+    body.add("status", new JsonPrimitive(status));
 
     JsonObject res = new JsonObject();
     res.add("log entries", body);
