@@ -1,11 +1,11 @@
-# Dockerfile for Continius-Integration project
-
-FROM anapsix/alpine-java:8
+#Dockerfile for Continius-Integration project
+FROM gradle:5.2-jdk-alpine
 
 # Copy project into image
-COPY . /app
+WORKDIR /srv
+COPY build.gradle .
+COPY src ./src
+USER root
+RUN  apk update && apk upgrade && apk add --no-cache bash git openssh
 
-# Build project
-RUN app/gradlew build
-
-CMD java -classpath ./app/out/production/classes se.kth.dd2480.grp25.ci.CiServer
+CMD ["gradle", "build  --console plain"]

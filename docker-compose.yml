@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  ci-srv:
+    build: .
+    command: sh -c "export TOKEN=<INSERT OAUTH TOKEN HERE> &&  gradle run"
+    ports:
+      - "8000:8000"
+  log-srv:
+    build: ./logDb/.
+    command: python manage.py runserver 0.0.0.0:8080
+    volumes:
+      - ./logDB:/logDb
+    ports:
+      - "8080:8080"
