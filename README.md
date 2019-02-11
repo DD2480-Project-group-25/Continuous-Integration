@@ -22,7 +22,15 @@ git clone git@github.com:DD2480-Project-group-25/Continuous-Integration.git
 
 ### Database with logged history
 
-An HTTP post request is used to log history from the CI service runs. The API for posting is available at ```http://localhost/8080/api/```. The CI service will post to this API if you run ```python3 manage.py runserver 8080``` standing in ```./logDb```.
+An HTTP post request is used to log history from the CI service runs. The API for posting is available at ```http://log-srv:8080/api/```. The CI service will post to this API if you run ```python3 manage.py runserver 8080``` standing in ```./logDb```.
+
+Format for post request to the api:
+
+```{"log entries":{"commit_id":"[github commit id]","start":"[timestamp]","status":"[status of build]","message":"[log message]"}}```
+
+An example of a post request:
+
+```{"log entries":{"commit_id":"abc123","start":"21:00:00","status":"SUCCESSFUL","message":"All tests passed."}}```
 
 ## Running the tests
 
