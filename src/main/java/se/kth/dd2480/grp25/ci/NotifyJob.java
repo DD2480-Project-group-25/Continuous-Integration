@@ -121,8 +121,9 @@ public class NotifyJob implements Runnable {
   }
 
   /**
-   * Create a notify message to github.
-   * Uses hardcoded URL to server, should be updated in production
+   * Create a notify message to github. Uses hardcoded URL to server, should be updated in
+   * production
+   *
    * @param message to github notification
    * @param state of the notification
    * @return properly formatted github notification
