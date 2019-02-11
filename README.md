@@ -58,10 +58,12 @@ You can verify that the project adheres to the style guide with:
 ## Built With
 
 * [Gradle](https://gradle.org/) - Build tool
-
+* [Docker](https://www.docker.com) - Containerization
+* [Django](https://www.djangoproject.com) - Web framework
+ 
 ## Contributing
 - Alzahraa Salman
-  - CloneJob, NotifyJob  
+  - CloneJob, NotifyJob
 - Helena Alinder
   - NotifyJob, TestJob, CleanupJob
 - Veronica Hage
@@ -73,6 +75,14 @@ You can verify that the project adheres to the style guide with:
   
 Note: The statistics show that some members have added/removed more lines of code than others.
 This is due to project setup and auto-generated content, rather than unbalanced workload.
+
+## Run with docker
+1. Download the project
+2. Update `docker-compose.yml` with your own git ''oauth token''
+3. Run `docker-compose build` from the root of the project to build docker images
+4. Run `docker-compose up` from the root to start the servers
+
+The ci-server will default listen at 0.0.0.0:8000 and the log-server listens at 0.0.0.0:8080
 
 ## License
 
