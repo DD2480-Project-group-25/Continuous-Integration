@@ -24,5 +24,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^log/', logs),
     url('api/', logView.as_view()),
-    url('logs/(\d+)/', entryDetailView, name='detail')
+    url('logs/([\w]+)/', entryDetailView, name='detail')
 ]
