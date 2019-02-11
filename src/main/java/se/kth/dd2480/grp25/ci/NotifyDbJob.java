@@ -102,7 +102,7 @@ public class NotifyDbJob implements Runnable {
         if (test) {
           url = new URL("https://postman-echo.com/post");
         } else {
-          url = new URL("http://157.230.31.10:8080/api/");
+          url = new URL("http://log-srv:8080/api/");
         }
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
