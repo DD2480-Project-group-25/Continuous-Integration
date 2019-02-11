@@ -1,8 +1,7 @@
 FROM python:3-alpine3.9
 
-COPY . /app
+WORKDIR /logDB
+COPY . .
+RUN pip3 install -r requirements.txt
 
-RUN pip3 install -r app/requirements.txt
-
-RUN python3 app/manage.py makemigrations
-RUN python3 app/manage.py migrate --run-syncdb
+CMD sh -c "python3 manage.py makemigrations && python3 manage.py migrate --run-syncdb"
