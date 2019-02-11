@@ -120,11 +120,19 @@ public class NotifyJob implements Runnable {
     }
   }
 
+  /**
+   * Create a notify message to github. Uses hardcoded URL to server, should be updated in
+   * production
+   *
+   * @param message to github notification
+   * @param state of the notification
+   * @return properly formatted github notification
+   */
   private String createParams(String message, String state) {
     String params =
         "{\"state\":\""
             + state
-            + "\",\"target_url\":\"https://api.github.com/repos/DD2480-Project-group-25/Continuous-Integration/build/"
+            + "\",\"target_url\":\"http://157.230.31.10:8080/logs/"
             + event.getId()
             + "\",\"description\":"
             + message
