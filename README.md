@@ -3,6 +3,8 @@ Continuous-Integration is the basis of a CI server.
 
 It is developed as exercise of learning about working together on GitHub.
 
+[Link to commit log server](http://157.230.31.10:8080/log/)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
