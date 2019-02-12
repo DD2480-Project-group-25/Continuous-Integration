@@ -3,6 +3,8 @@ Continuous-Integration is the basis of a CI server.
 
 It is developed as exercise of learning about working together on GitHub.
 
+[Link to commit log server](http://157.230.31.10:8080/log/)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
@@ -22,7 +24,15 @@ git clone git@github.com:DD2480-Project-group-25/Continuous-Integration.git
 
 ### Database with logged history
 
-An HTTP post request is used to log history from the CI service runs. The API for posting is available at ```http://localhost/8080/api/```. The CI service will post to this API if you run ```python3 manage.py runserver 8080``` standing in ```./logDb```.
+An HTTP post request is used to log history from the CI service runs. When running ```python3 manage.py runserver 8080``` standing in ```./logDb```, the API for posting will be available at ```http://localhost:8080/api/```.
+
+Format for post request to the api:
+
+```{"log entries":{"commit_id":"[github commit id]","start":"[timestamp]","status":"[status of build]","message":"[log message]"}}```
+
+An example of a post request:
+
+```{"log entries":{"commit_id":"abc123","start":"21:00:00","status":"SUCCESSFUL","message":"All tests passed."}}```
 
 ## Running the tests
 
@@ -50,10 +60,12 @@ You can verify that the project adheres to the style guide with:
 ## Built With
 
 * [Gradle](https://gradle.org/) - Build tool
-
+* [Docker](https://www.docker.com) - Containerization
+* [Django](https://www.djangoproject.com) - Web framework
+ 
 ## Contributing
 - Alzahraa Salman
-  - CloneJob, NotifyJob  
+  - CloneJob, NotifyJob
 - Helena Alinder
   - NotifyJob, TestJob, CleanupJob
 - Veronica Hage
@@ -65,6 +77,14 @@ You can verify that the project adheres to the style guide with:
   
 Note: The statistics show that some members have added/removed more lines of code than others.
 This is due to project setup and auto-generated content, rather than unbalanced workload.
+
+## Run with docker
+1. Download the project
+2. Update `docker-compose.yml` with your own git ''oauth token''
+3. Run `docker-compose build` from the root of the project to build docker images
+4. Run `docker-compose up` from the root to start the servers
+
+The ci-server will default listen at 0.0.0.0:8000 and the log-server listens at 0.0.0.0:8080
 
 ## License
 
